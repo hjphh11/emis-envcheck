@@ -1,0 +1,31 @@
+/*
+ * ============================================================
+ *  字体 —— 只加载「本应用实际用到字符」的子集（scripts/subset-fonts.py 生成）
+ * ============================================================
+ * 为什么不用 @fontsource 的整包：
+ *   CJK 字体会被切成 174 个 unicode-range 子集，打包进 exe 共 12.3MB，
+ *   而本应用真正用到的汉字不到 700 个。子集化后两套字体合计约 530KB，
+ *   单文件 exe 从 17.7MB 降到 ~6MB。
+ *
+ * 生成命令（改了 UI 文案后要重跑）：
+ *   python scripts/subset-fonts.py
+ *
+ * 兜底：万一某个字没被收进子集，--font-display / --font-hand 的
+ *   font-family 栈后面还有 Noto Serif SC / 宋体 / 楷体 等系统字体，不会出方块。
+ */
+
+@font-face {
+  font-family: "ZCOOL XiaoWei";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/zcool-xiaowei-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Ma Shan Zheng";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/ma-shan-zheng-subset.woff2") format("woff2");
+}

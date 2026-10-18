@@ -8,6 +8,11 @@
 
 制作 **清吾** · [qingwu.ink](https://qingwu.ink) ｜ 主题形象 **爱弥斯**
 
+![单文件](https://img.shields.io/badge/单文件-5.86MB-rose)
+![平台](https://img.shields.io/badge/Windows-10%2F11%20x64-c23a55)
+![便携](https://img.shields.io/badge/免安装-绿色便携-e8b04b)
+![Tauri](https://img.shields.io/badge/Tauri-2-8b5a3c)
+
 </div>
 
 ---
@@ -34,11 +39,23 @@
 | **兼容** | Windows 11 升级逐项检测：通过 / 警告 / 不通过 + 原因 |
 | **监控** | 实时曲线，看看现在谁在吃 CPU / 内存 / 带宽 |
 
+## 看一眼
+
+| 体检 | 环境 |
+|---|---|
+| ![体检](docs/screenshots/01-体检.png) | ![环境](docs/screenshots/02-环境.png) |
+
+| 兼容 | 监控 |
+|---|---|
+| ![兼容](docs/screenshots/03-兼容.png) | ![监控](docs/screenshots/04-监控.png) |
+
+> 截图取自一台真实机器：i7-14650HX / 16GB DDR5 / RTX 4060 Laptop / 双屏。
+
 ## 下载与使用
 
-1. 从 Releases 下载 `爱弥斯·环境检测.exe`
+1. 从 Releases 下载 `爱弥斯·环境检测.exe`（**5.86 MB**，或直接用 `-绿色版.zip`）
 2. 放到任意目录（桌面、U 盘、移动硬盘都行），双击
-3. 首次会花 2–6 秒扫描，之后随开随用
+3. 首次会花 4–6 秒扫描，之后随开随用
 
 > 想拿到温度、风扇转速、硬盘 SMART 明细、TPM 状态这些**深度数据**，需要管理员权限：
 > 界面上有「以管理员重启」按钮，点一下即可。普通权限也能用，只是对应项显示为不可用。
@@ -51,25 +68,35 @@
 | 界面 | **React 19 + TypeScript + Tailwind CSS 4 + motion** |
 | 采集 | **PowerShell 5.1**（WMI / CIM / 注册表 / 常见目录扫描） |
 | 实时 | **sysinfo** crate（CPU / 内存 / 网络 / 磁盘） |
+| 字体 | 站酷小薇 + 马善政，**fontTools 子集化** 4.79MB → 542KB |
 | 打包 | `tauri build --no-bundle` → 单文件 exe，无安装器 |
 
 ## 项目结构
 
 ```
 hjjc/
-├─ src/                     前端（React）
-│  ├─ components/pages/     四个页签
-│  ├─ components/ui/        玻璃卡 / 评分环 / 曲线 / 状态点…
-│  ├─ lib/api.ts            Tauri 调用封装（浏览器里自动退回 mock）
-│  ├─ mock/sample.ts        浏览器预览假数据
-│  ├─ styles/               tokens.css + app.css（原站设计 tokens）
-│  └─ types.ts              数据契约（唯一真相）
+├─ src/                       前端（React 19 + TS + Tailwind 4）
+│  ├─ components/pages/       四个页签：体检 / 环境 / 兼容 / 监控
+│  ├─ components/ui/          玻璃卡 / 评分环 / 折线 / 状态点 / Toast…
+│  ├─ components/             标题栏 / 页签栏 / 工具条 / 骨架屏 / 页脚
+│  ├─ assets/fonts/           子集化后的两套中文字体（542KB）
+│  ├─ lib/api.ts              Tauri 调用封装（浏览器里自动退回 mock）
+│  ├─ lib/report.ts           自包含 HTML / JSON 报告模板
+│  ├─ mock/sample.ts          浏览器预览假数据
+│  ├─ styles/                 tokens.css + fonts.css + app.css
+│  └─ types.ts                数据契约（唯一真相）
 ├─ src-tauri/
-│  ├─ src/                  Rust：scan_all / live_snapshot / 提权 / 写文件
-│  └─ scripts/scan.ps1      PowerShell 采集器（核心）
-├─ docs/                    数据契约 / 检测项清单 / 参考调研 / 构建打包
-├─ scripts/make-icon.py     图标生成
-└─ assets/icon-source.png   图标源图
+│  ├─ src/                    Rust：scan_all / live_snapshot / 提权 / 写文件
+│  └─ scripts/scan.ps1        PowerShell 采集器（2413 行，核心）
+├─ dev/                       采集器工具链：texts.json / gen-texts / verify
+├─ docs/                      数据契约 / 检测项清单 / 参考调研 / 构建打包 / 截图
+├─ scripts/
+│  ├─ build-portable.ps1      一键出绿色版本 + zip + SHA256
+│  ├─ subset-fonts.py         字体子集化（省 11.9MB）
+│  ├─ capture-app.ps1         真机窗口截图
+│  ├─ capture-tabs.ps1        真机四页签自动截图
+│  └─ make-icon.py            应用图标生成
+└─ assets/icon-source.png     图标源图（1024×1024）
 ```
 
 ## 本地开发
@@ -82,12 +109,13 @@ npm run dev              # http://localhost:1420
 # 桌面开发（需要 Rust 工具链 + WebView2）
 npm run app:dev
 
-# 出绿色版单文件 exe
-npm run app:build        # → src-tauri/target/release/*.exe
+# 出绿色版单文件 exe（含 zip + SHA256）
+pwsh -File scripts\build-portable.ps1
 ```
 
 前置：Node 18+ / Rust stable / WebView2（Win10 1803+ 一般自带）。
 国内网络建议给 cargo 配 rsproxy 镜像、npm 用 npmmirror。
+改了界面文案后记得 `python scripts/subset-fonts.py` 重新裁字体子集。
 
 ## 数据采集说明
 

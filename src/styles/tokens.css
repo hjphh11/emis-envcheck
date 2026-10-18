@@ -1,0 +1,96 @@
+/*
+ * ============================================================
+ *  爱弥斯 · 环境检测 —— 设计 tokens
+ *  取自清吾博客（qingwu.ink）的暖色二次元玻璃拟态系统。
+ *  原则：只做暖色、单一主题；颜色一律走变量，页面里不写十六进制。
+ * ============================================================
+ */
+
+@theme {
+  /* —— 原始色板（取自爱弥斯） —— */
+  --color-rose: #f6a5b8; /* 主色 · 玫瑰粉：只做大面积色块 / 标签底 / 氛围层 */
+  --color-crimson: #c23a55; /* 强调色 · 绯红：文字 / 实心按钮（白字 5.1:1） */
+  --color-cream: #fdf6f0; /* 底色 · 奶油白 */
+  --color-amber: #e8b04b; /* 点睛 · 琥珀金 */
+  --color-brown: #8b5a3c; /* 暖棕 */
+  --color-ink: #4a3728; /* 正文 · 深暖棕 */
+
+  /* —— 语义色（写页面时只用这些，不手写透明度） —— */
+  --color-accent: var(--color-crimson);
+  --color-accent-soft: #a8324a; /* 更暗一档 · ≤12px 极小字 */
+  --color-cta: var(--color-crimson);
+  --color-muted: rgba(74, 55, 40, 0.9); /* 次要文字 · 5.8:1 */
+  --color-subtle: rgba(74, 55, 40, 0.75); /* 三级文字 · 4.85:1 */
+  --color-hairline: rgba(194, 58, 85, 0.16);
+
+  /* —— 状态色（全部并进暖色系）——
+     圆点 / 填充可以用浅一档的 ok/warn/unknown；
+     文字必须用 *-text 一档（在奶油白/玻璃白上都 ≥ 4.5:1）。 */
+  --color-ok: #5f8a5f;
+  --color-ok-text: #4a7a4a;
+  --color-warn: #b98228;
+  --color-warn-text: #8a5f14;
+  --color-unknown: #8a7a6d;
+  --color-unknown-text: #6f6155;
+  --color-fail: #c23a55;
+  --color-fail-text: #a8324a;
+
+  /* —— 字体 —— */
+  --font-display: "ZCOOL XiaoWei", "Noto Serif SC", "Songti SC", serif;
+  --font-hand: "Ma Shan Zheng", "STKaiti", "KaiTi", cursive;
+  --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", "Segoe UI", sans-serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+    monospace;
+
+  /* —— 字号阶梯（与博客一致，相邻层差 ≥ 1.25 倍） —— */
+  --text-display: clamp(2rem, 1.5rem + 2.2vw, 3rem); /* 48px */
+  --text-page: clamp(1.75rem, 1.5rem + 1vw, 2.125rem); /* 34px */
+  --text-section: clamp(1.5rem, 1.35rem + 0.6vw, 1.875rem); /* 30px */
+  --text-subsection: 1.5rem; /* 24px */
+  --text-cardtitle: 1.125rem; /* 18px */
+  --text-label: 0.8125rem; /* 13px */
+
+  /* —— 形状 —— */
+  --radius-card: 1.25rem;
+  --radius-pill: 9999px;
+
+  /* —— 间距节奏 —— */
+  --space-block: 1.75rem;
+  --space-section: 2.75rem;
+
+  /* —— 动效 —— */
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 180ms;
+  --dur-state: 340ms;
+  --dur-move: 820ms;
+}
+
+/*
+ * 非 utility 类 token（玻璃拟态 / 背景 / 布局），只在这里定义一次。
+ * 这些不在 Tailwind 的命名空间里，所以放在 :root 而不是 @theme。
+ */
+:root {
+  /* 玻璃卡 */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-solid: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 10px 30px rgba(246, 165, 184, 0.16);
+  --glass-shadow-hover: 0 16px 40px rgba(246, 165, 184, 0.24);
+  --glass-blur: blur(16px) saturate(160%);
+
+  /* 背景光斑（两层径向渐变，玫瑰粉 / 琥珀金） */
+  --bg-spot-rose: rgba(246, 165, 184, 0.34);
+  --bg-spot-amber: rgba(232, 176, 75, 0.2);
+
+  /* 布局 */
+  --shell-max: 1240px;
+  --titlebar-h: 46px;
+  --header-h: 63px;
+
+  /* 层级 */
+  --z-titlebar: 60;
+  --z-header: 50;
+  --z-toast: 80;
+}

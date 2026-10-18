@@ -1,0 +1,45 @@
+[package]
+name = "hjjc"
+version = "1.0.0"
+description = "爱弥斯 · 环境检测 —— 清吾出品的绿色版电脑环境检测工具"
+authors = ["清吾"]
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "hjjc_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-clipboard-manager = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# 只启用用得到的 system / network，关掉默认的 disk / component / user，减少编译量与体积
+sysinfo = { version = "0.39.6", default-features = false, features = ["system", "network"] }
+# ShellExecuteW(runas) 提权重启 + IsUserAnAdmin 管理员判定 + MultiByteToWideChar 控制台编码兜底
+windows-sys = { version = "0.61.2", features = [
+    "Win32_Foundation",
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Globalization",
+] }
+# 本地时区 ISO-8601 时间（带 +08:00 偏移）
+time = { version = "0.3.55", features = ["local-offset"] }
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

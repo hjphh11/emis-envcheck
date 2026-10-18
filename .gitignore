@@ -32,3 +32,5 @@ npm-debug.log*
 .DS_Store
 *.suo
 *.sw?
+dev/*scan*.json
+dev/tabs/
