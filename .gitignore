@@ -11,9 +11,13 @@ release/
 *.msi
 *.nsis.zip
 
-# 本地临时 / 调试
+# 本地临时 / 调试产物
 dev/sample-scan.json
 dev/*.log
+dev/*.png
+dev/*.html
+dev/_probe*
+dev/*-out.txt
 .tmp/
 
 # 日志

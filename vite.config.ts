@@ -31,7 +31,9 @@ export default defineConfig(() => ({
   build: {
     // WebView2 是 Chromium 内核，按 Chromium 115+ 编译即可
     target: "chrome115",
-    minify: "esbuild",
+    // 压缩器用 Vite 8 的默认值（oxc）。
+    // 注意：不要写 minify: "esbuild" —— Vite 8 不再内置 esbuild，
+    // 会报 `Cannot find package 'esbuild'`，把整个构建卡死。
     sourcemap: false,
     chunkSizeWarningLimit: 1500,
   },
