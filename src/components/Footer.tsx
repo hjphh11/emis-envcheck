@@ -1,12 +1,13 @@
 import { openUrl } from "../lib/api";
 
 export interface FooterProps {
-  /** 版本号来自 appInfo；还没拿到时先用 1.0.0 */
+  /** 展示版本号（页脚 / 关于面板共用） */
   version: string;
+  onAbout: () => void;
 }
 
-/** 页脚：制作 清吾 · qingwu.ink ｜ 主题形象 爱弥斯 ｜ vX.Y.Z */
-export function Footer({ version }: FooterProps) {
+/** 页脚：制作 清吾 · qingwu.ink ｜ 主题形象 爱弥斯 ｜ vX.Y.Z ｜ 关于 */
+export function Footer({ version, onAbout }: FooterProps) {
   const openHome = () => {
     void openUrl("https://qingwu.ink").catch(() => {
       /* 浏览器预览下 window.open 被拦截也不影响界面 */
@@ -37,6 +38,20 @@ export function Footer({ version }: FooterProps) {
           ｜
         </span>
         <span>v{version}</span>
+        <span className="app-footer__sep" aria-hidden="true">
+          ｜
+        </span>
+        <button
+          type="button"
+          className="app-footer__about"
+          onClick={onAbout}
+          title="关于爱弥斯 · 环境检测"
+        >
+          关于
+        </button>
+        <span className="app-footer__line">
+          爱弥斯 · 有拿不准的，再扫一次就好 ～
+        </span>
       </div>
     </footer>
   );

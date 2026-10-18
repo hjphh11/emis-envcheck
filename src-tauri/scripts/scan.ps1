@@ -37,7 +37,7 @@ $DebugPreference       = 'SilentlyContinue'
 $WarningPreference     = 'SilentlyContinue'
 $InformationPreference = 'SilentlyContinue'
 
-$script:CollectorVersion = '1.0.0'
+$script:CollectorVersion = '1.1.0'
 $script:TotalSw = [System.Diagnostics.Stopwatch]::StartNew()
 $script:Warnings = @()
 $script:SectionMs = [ordered]@{}
@@ -73,119 +73,136 @@ aXJld2FsbE1peGVkIjoi6YOo5YiG5byA5ZCv77yI5Z+f77yaezB977yM5LiT55So77yaezF977yM5YWs
 dWFjT24iOiLlt7LlvIDlkK/vvIjnrqHnkIblkZjmibnlh4bmqKHlvI/vvIkiLCJ1YWNPbk5vUHJvbXB0Ijoi5bey5byA5ZCv77yI
 5LiN5o+Q56S655u05o6l5o+Q5Y2H77yJIiwidWFjT2ZmIjoi5bey5YWz6ZetIiwiYml0TG9ja2VyT24iOiLlt7LlvIDlkK8iLCJi
 aXRMb2NrZXJPZmYiOiLlt7LlhbPpl60iLCJiaXRMb2NrZXJVbmtub3duIjoi5peg5rOV6K+75Y+W77yI6ZyA6KaB566h55CG5ZGY
-5p2D6ZmQ77yJIiwicGVWZXJzaW9uIjoiUEUg5p6E5p62IHswfSIsIm5vRGF0YSI6IuaXoOazleivu+WPliJ9LCJzZWN0aW9ucyI6
-eyJzeXN0ZW0iOiLns7vnu5/kv6Hmga8iLCJtb3RoZXJib2FyZCI6IuS4u+adv+S4juWbuuS7tiIsImNwdSI6IuWkhOeQhuWZqCIs
-Im1lbW9yeSI6IuWGheWtmCIsImdwdSI6IuaYvuWNoSIsImRpc3BsYXkiOiLmmL7npLrlmagiLCJkaXNrIjoi5a2Y5YKoIiwibmV0
-d29yayI6Iue9kee7nCIsInJ1bnRpbWUiOiLov5DooYznjq/looMiLCJzZWN1cml0eSI6IuWuieWFqOeKtuaAgSIsImNvbXBhdCI6
-IuWFvOWuueaAp+WIpOWumiIsInNjb3JlIjoi5YGl5bq36K+E5YiGIn0sIndhcm5pbmdzIjp7Im5vQWRtaW5UZW1wIjoi5pyq5Lul
-566h55CG5ZGY6Lqr5Lu96L+Q6KGM77yaQ1BVIC8g5Li75p2/5rip5bqm5LiO6aOO5omH6L2s6YCf5LiN5Y+v55So77yI6ZyA566h
-55CG5ZGY5p2D6ZmQ5LiO5Lyg5oSf5Zmo6amx5Yqo77yM57u/6Imy54mI6buY6K6k5LiN5o+Q5L6b77yJIiwibm9BZG1pblNtYXJ0
-Ijoi5pyq5Lul566h55CG5ZGY6Lqr5Lu96L+Q6KGM77ya56Gs55uYIFNNQVJUIOWOn+Wni+aYjue7hu+8iOa4qeW6puOAgemAmueU
-teaXtumXtOOAgeejqOaNn+OAgemAmueUteasoeaVsO+8ieS4jeWPr+eUqO+8jOWBpeW6t+W6puS7headpeiHquezu+e7n+S4iuaK
-pSIsIm5vQWRtaW5UcG0iOiLmnKrku6XnrqHnkIblkZjouqvku73ov5DooYzvvJpUUE0g6K+m57uG54q25oCB77yIR2V0LVRwbSAv
-IFdpbjMyX1Rwbe+8ieS4jeWPr+ivu++8jOW3suS+neaNriBBQ1BJIOiuvuWkh+aemuS4vuaOqOaWreeJiOacrCIsIm5vQWRtaW5C
-aXRsb2NrZXIiOiLmnKrku6XnrqHnkIblkZjouqvku73ov5DooYzvvJpCaXRMb2NrZXIg5Yqg5a+G54q25oCB5LiN5Y+v55SoIiwi
-bm9BZG1pblNlY3VyZUJvb3QiOiLmnKrku6XnrqHnkIblkZjouqvku73ov5DooYzvvJpDb25maXJtLVNlY3VyZUJvb3RVRUZJIOS4
-jeWPr+eUqO+8jOW3suaUueeUqOazqOWGjOihqOivu+WPluWuieWFqOWQr+WKqOeKtuaAgSIsInJlbGlhYmlsaXR5VW5hdmFpbGFi
-bGUiOiLnoaznm5jlj6/pnaDmgKforqHmlbDlmajvvIjmuKnluqYgLyDpgJrnlLXml7bpl7QgLyDno6jmjZ/vvInkuI3lj6/or7vv
-vJror6Xnoaznm5jkuI3mlK/mjIHmiJbpnIDopoHnrqHnkIblkZjmnYPpmZAiLCJtb25pdG9yVW5hdmFpbGFibGUiOiLmnKrog73o
-r7vlj5bmmL7npLrlmaggRURJRCDkv6Hmga/vvIhXbWlNb25pdG9ySUQg5LiN5Y+v55So77yJIiwiYWN0aXZhdGlvbkZhaWxlZCI6
-Iuezu+e7n+a/gOa0u+eKtuaAgeafpeivoui2heaXtuaIluWksei0pe+8mnswfSIsImFjdGl2YXRpb25Vbmtub3duIjoi5bey6K+7
-5Y+W6K645Y+v5L+h5oGv77yM5L2G5peg5rOV5Yik5pat5r+A5rS754q25oCBIiwid3NsTGlzdEZhaWxlZCI6IldTTCDlt7Llrono
-o4XvvIzkvYbml6Dms5XliJflh7rlt7Llronoo4Xlj5HooYzniYjvvJp7MH0iLCJzZWN0aW9uRmFpbGVkIjoi6YeH6ZuG6aG544CM
-ezB944CN5aSx6LSl77yaezF9Iiwic2VjdGlvblNsb3ciOiLph4fpm4bpobnjgIx7MH3jgI3ogJfml7YgezF9IG1z77yM5YGP5oWi
-IiwiZG90bmV0RmFsbGJhY2siOiLmnKrmib7liLAgZG90bmV0IOWRveS7pO+8jOW3suaUueS4uuaJq+aPjyBDOlxcUHJvZ3JhbSBG
-aWxlc1xcZG90bmV0XFxzaGFyZWQg55uu5b2VIiwidmNwcEVtcHR5Ijoi5pyq5LuO5Y246L295rOo5YaM6KGo6K+75YiwIFZDKysg
-6L+Q6KGM5bqT5L+h5oGvIiwidHBtVW5rbm93biI6IlRQTSDnirbmgIHml6Dms5XliKTlrprvvJrpnIDopoHnrqHnkIblkZjmnYPp
-mZDmiJbor6Xorr7lpIfkuI3mlK/mjIEiLCJzZWN1cmVCb290VW5rbm93biI6IuWuieWFqOWQr+WKqOeKtuaAgeaXoOazleWIpOWu
-mu+8mumdniBVRUZJIOWbuuS7tuaIluivu+WPluiiq+aLkue7nSIsImRpc3BsYXlNaXNzaW5nIjoi5pyq6IO96K+75Y+W5pi+56S6
-5Zmo5L+h5oGv77yM5pi+56S655u45YWz5a2X5q615bey572u5Li6IG51bGwgLyDnqbrmlbDnu4QiLCJuZXR3b3JrUHJvYmUiOiLl
-pJbnvZHov57pgJrmgKfmjqLmtYvlpLHotKXvvIjlj6/og73ml6DnvZHnu5zmiJbooqvpmLLngavlopnmi6bmiKrvvIkiLCJkbnNQ
-cm9iZSI6IkROUyDop6PmnpDlpLHotKXvvIxkbnNPayDlt7Lnva7kuLogZmFsc2UiLCJub0dwdSI6Iuacquivu+WPluWIsOaYvuWN
-oeS/oeaBr++8jGdwdXMg5Li656m65pWw57uEIiwiY3B1RmFsbGJhY2siOiLmnKrog73ku44gV01JIOivu+WPluWkhOeQhuWZqOS/
-oeaBr++8jOW3suWwneivleazqOWGjOihqOWFnOW6lSIsIm5vT3MiOiLmnKrog73or7vlj5bmk43kvZzns7vnu5/kv6Hmga/vvIzl
-t7LnlKjnjq/looPlj5jph4/lhZzlupUiLCJzbWFydERldGFpbCI6IlNNQVJUIOa4qeW6piAvIOmAmueUteasoeaVsOmcgOimgeeu
-oeeQhuWRmOadg+mZkO+8jOW3sue9ruS4uiBudWxsIiwiaHlwZXJ2VW5rbm93biI6IuaXoOazleWIpOWumuaYr+WQpuWQr+eUqCBI
-eXBlci1WIiwicG93ZXJQbGFuVW5rbm93biI6IuaXoOazleivu+WPluW9k+WJjeeUtea6kOiuoeWIkiIsIm5vUmVsaWFiaWxpdHki
-OiJNU0ZUX1N0b3JhZ2VSZWxpYWJpbGl0eUNvdW50ZXIg5LiN5Y+v55So77yM56Gs55uY5rip5bqmIC8g6YCa55S15pe26Ze0IC8g
-56Oo5o2f5bqm5Li6IG51bGwifSwiZWxldmF0aW9uR2FpbnMiOlsiQ1BVIC8g5Li75p2/5rip5bqm5LiO6aOO5omH6L2s6YCf77yI
-6ZyA566h55CG5ZGY5p2D6ZmQ5LiO5Lyg5oSf5Zmo6amx5Yqo77yJIiwi56Gs55uYIFNNQVJUIOWOn+Wni+WxnuaAp++8mua4qeW6
-puOAgemAmueUteaXtumXtOOAgemAmueUteasoeaVsOOAgeejqOaNn+W6piIsIlRQTSAyLjAg6K+m57uG54q25oCB77yIR2V0LVRw
-bSAvIFdpbjMyX1Rwbe+8iSIsIkJpdExvY2tlciDns7vnu5/nm5jliqDlr4bnirbmgIEiLCLlronlhajlkK/liqjnirbmgIHmoKHp
-qozvvIhDb25maXJtLVNlY3VyZUJvb3RVRUZJ77yJIl0sImNvbXBhdCI6eyJjcHU2NCI6eyJuYW1lIjoiNjQg5L2N5aSE55CG5Zmo
-IiwicmVxdWlyZW1lbnQiOiLpnIDopoEgNjQg5L2N5aSE55CG5Zmo77yIeDY0IC8gQVJNNjTvvIkiLCJwYXNzRGV0YWlsIjoi5aSE
-55CG5Zmo5LiO57O757uf5Z2H5Li6IDY0IOS9jSIsImZhaWxSZWFzb24iOiLlpITnkIblmajkuLogMzIg5L2N5p625p6E77yM5peg
-5rOV5a6J6KOFIDY0IOS9jeezu+e7nyIsImZhaWxEZXRhaWwiOiLpnIDopoHmm7TmjaLmlK/mjIEgNjQg5L2N55qE56Gs5Lu2Iiwi
-dW5rbm93blJlYXNvbiI6IuacquiDveivu+WPluWkhOeQhuWZqOS9jeWuvSJ9LCJjcHVNb2RlbCI6eyJuYW1lIjoiQ1BVIOWei+WP
-t++8iFdpbmRvd3MgMTEg5pSv5oyB5YiX6KGo77yJIiwicmVxdWlyZW1lbnQiOiJJbnRlbCDnrKwgOCDku6Plj4rku6XkuIogLyBB
-TUQgWmVuIDLvvIhSeXplbiAyMDAwIOezu+WIl++8ieWPiuS7peS4iiIsInBhc3NEZXRhaWwiOiLmjInku6PpmYXop4TliJnlkb3k
-uK0gV2luZG93cyAxMSDlrpjmlrnmlK/mjIHojIPlm7QiLCJ3YXJuUmVhc29uIjoi5peg5rOV6Ieq5Yqo5Yik5a6a6K+l5Z6L5Y+3
-5piv5ZCm5Zyo5b6u6L2v5a6Y5pa55pSv5oyB5YiX6KGo5YaF77yM6K+35qC45a+55Z6L5Y+3Iiwid2FybkRldGFpbCI6IuWumOaW
-ueaUr+aMgeWIl+ihqO+8mmh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS96aC1jbi93aW5kb3dzLWhhcmR3YXJlL2Rlc2lnbi9t
-aW5pbXVtL3dpbmRvd3MtcHJvY2Vzc29yLXJlcXVpcmVtZW50cyIsImZhaWxSZWFzb24iOiLor6XlpITnkIblmajkuI3lnKggV2lu
-ZG93cyAxMSDlrpjmlrnmlK/mjIHojIPlm7TlhoUiLCJmYWlsRGV0YWlsIjoi5Y+v57un57ut5L2/55So5b2T5YmN57O757uf54mI
-5pys77yM5Y2H57qn6ZyA6KaB5pu05o2i56Gs5Lu2In0sImNwdUNvcmVzIjp7Im5hbWUiOiLniannkIbmoLjlv4PmlbAiLCJyZXF1
-aXJlbWVudCI6IuiHs+WwkSAyIOS4queJqeeQhuaguOW/gyIsInBhc3NEZXRhaWwiOiLmu6HotrMgV2luZG93cyAxMSDmnIDlsJHm
-oLjlv4PopoHmsYIiLCJmYWlsUmVhc29uIjoi54mp55CG5qC45b+D5bCR5LqOIDIg5LiqIiwiZmFpbERldGFpbCI6IumcgOimgeab
-tOmrmOinhOagvOeahOWkhOeQhuWZqCJ9LCJjcHVDbG9jayI6eyJuYW1lIjoi5aSE55CG5Zmo5Li76aKRIiwicmVxdWlyZW1lbnQi
-OiLkuI3kvY7kuo4gMSBHSHoiLCJwYXNzRGV0YWlsIjoi5ruh6LazIFdpbmRvd3MgMTEg5pyA5L2O5Li76aKR6KaB5rGCIiwiZmFp
-bFJlYXNvbiI6IuS4u+mikeS9juS6jiAxIEdIeiIsImZhaWxEZXRhaWwiOiLpnIDopoHmm7Tpq5jkuLvpopHnmoTlpITnkIblmagi
-fSwibWVtU2l6ZSI6eyJuYW1lIjoi5YaF5a2Y5a656YePIiwicmVxdWlyZW1lbnQiOiLoh7PlsJEgNCBHQu+8iOW7uuiuriA4IEdC
-IOS7peS4iu+8iSIsInBhc3NEZXRhaWwiOiLmu6HotrMgV2luZG93cyAxMSDmnIDkvY7lhoXlrZjopoHmsYIiLCJ3YXJuUmVhc29u
-Ijoi5YaF5a2Y5Li6IDTigJM4IEdC77yM5Y+v5Lul5a6J6KOF5L2G5bu66K6u5Yqg5YiwIDggR0Ig5Lul5LiKIiwiZmFpbFJlYXNv
-biI6IuWGheWtmOS9juS6jiA0IEdC77yM5peg5rOV5ruh6LazIFdpbmRvd3MgMTEg6KaB5rGCIiwiZmFpbERldGFpbCI6IuW7uuiu
-ruWNh+e6p+WGheWtmOadoSIsInVua25vd25SZWFzb24iOiLml6Dms5Xor7vlj5bniannkIblhoXlrZjlrrnph48ifSwiZGlza1Nw
-YWNlIjp7Im5hbWUiOiLns7vnu5/nm5jlj6/nlKjnqbrpl7QiLCJyZXF1aXJlbWVudCI6IuiHs+WwkSA2NCBHQiDlj6/nlKjnqbrp
-l7QiLCJwYXNzRGV0YWlsIjoi5ruh6LazIFdpbmRvd3MgMTEg5a6J6KOF5LiO5pu05paw5omA6ZyA56m66Ze0IiwiZmFpbFJlYXNv
-biI6Iuezu+e7n+ebmOWPr+eUqOepuumXtOS4jei2syA2NCBHQiIsImZhaWxEZXRhaWwiOiLmuIXnkIbno4Hnm5jmiJbmm7TmjaLm
-m7TlpKflrrnph4/noaznm5giLCJ1bmtub3duUmVhc29uIjoi5peg5rOV6K+75Y+W57O757uf55uY5a656YePIn0sInVlZmkiOnsi
-bmFtZSI6IlVFRkkg5Zu65Lu2IiwicmVxdWlyZW1lbnQiOiLpnIDopoEgVUVGSSDlvJXlr7zmqKHlvI8iLCJwYXNzRGV0YWlsIjoi
-5b2T5YmN5Li6IFVFRkkg5byV5a+8IiwiZmFpbFJlYXNvbiI6IuW9k+WJjeS4uiBMZWdhY3kgQklPUyDlvJXlr7wiLCJmYWlsRGV0
-YWlsIjoi5YiH5o2iIFVFRkkg6YCa5bi46ZyA6KaBIE1CUjJHUFQg6L2s5o2i5YiG5Yy677yI5Yqh5b+F5YWI5aSH5Lu977yJ5oiW
-6YeN6KOF57O757ufIiwidW5rbm93blJlYXNvbiI6IuaXoOazleWIpOWumuWbuuS7tuexu+WeiyJ9LCJzZWN1cmVCb290Ijp7Im5h
-bWUiOiLlronlhajlkK/liqjvvIhTZWN1cmUgQm9vdO+8iSIsInJlcXVpcmVtZW50Ijoi6ZyA6KaB5pSv5oyB5bm25bey5ZCv55So
-IFNlY3VyZSBCb290IiwicGFzc0RldGFpbCI6IuWuieWFqOWQr+WKqOW3suWQr+eUqCIsIndhcm5SZWFzb24iOiLkuLvmnb/mlK/m
-jIHlronlhajlkK/liqjkvYblvZPliY3mnKrlkK/nlKjvvIzlj6/lnKggQklPUyAvIFVFRkkg5Lit5byA5ZCvIiwid2FybkRldGFp
-bCI6IkJJT1Mg4oaSIFNlY3VyaXR5IOKGkiBTZWN1cmUgQm9vdCDihpIg6K6+5Li6IEVuYWJsZWQiLCJmYWlsUmVhc29uIjoi5Zu6
-5Lu25LiN5pSv5oyB5a6J5YWo5ZCv5YqoIiwidW5rbm93blJlYXNvbiI6IuaXoOazleivu+WPluWuieWFqOWQr+WKqOeKtuaAgSJ9
-LCJ0cG0iOnsibmFtZSI6IlRQTSAyLjAiLCJyZXF1aXJlbWVudCI6IumcgOimgSBUUE0gMi4w77yI5Y+v5L+h5bmz5Y+w5qih5Z2X
-77yJIiwicGFzc0RldGFpbCI6IlRQTSAyLjAg5bey5ZCv55SoIiwiZmFpbFJlYXNvbiI6IlRQTSDniYjmnKzkuLogMS4y77yM5L2O
-5LqOIFdpbmRvd3MgMTEg6KaB5rGCIiwiZmFpbFJlYXNvbk1pc3NpbmciOiLmnKrmo4DmtYvliLAgVFBNIiwiZmFpbERldGFpbCI6
-IumHjeWQr+i/m+WFpSBCSU9TIC8gVUVGSe+8iOW8gOacuuaMiSBEZWwgLyBGMiAvIEYxMO+8ieKGkiBTZWN1cml0eSAvIFRydXN0
-ZWQgQ29tcHV0aW5nIOKGkiDlkK/nlKggVFBNIDIuMCAvIFBUVCAvIGZUUE0iLCJ3YXJuRGlzYWJsZWQiOiJUUE0g5Ly85LmO5Zyo
-5Zu65Lu25Lit6KKr56aB55So77yM6K+35ZyoIEJJT1MgLyBVRUZJIOS4reWQr+eUqCBUUE0gMi4wIiwidW5rbm93blJlYXNvbiI6
-IlRQTSDnirbmgIHml6Dms5XliKTlrprvvIjpnIDopoHnrqHnkIblkZjmnYPpmZDmiJbor6Xorr7lpIfkuI3mlK/mjIHvvIkifSwi
-ZHgxMiI6eyJuYW1lIjoiRGlyZWN0WCAxMiIsInJlcXVpcmVtZW50Ijoi6ZyA6KaB5pi+5Y2h5pSv5oyBIERpcmVjdFggMTLvvIjn
-ibnmgKfnuqfliKsgMTJfMCDlj4rku6XkuIrvvIkiLCJwYXNzRGV0YWlsIjoi5pi+5Y2h6amx5Yqo5pSv5oyBIERpcmVjdFggMTIi
-LCJmYWlsUmVhc29uIjoi5pi+5Y2h5oiW6amx5Yqo5LiN5pSv5oyBIERpcmVjdFggMTIiLCJmYWlsRGV0YWlsIjoi5YWI5bCd6K+V
-5pu05paw5pi+5Y2h6amx5Yqo77yb5LuN5LiN5pSv5oyB5YiZ6ZyA5pu05o2i5pi+5Y2hIiwidW5rbm93blJlYXNvbiI6IuaXoOaz
-leivu+WPliBEaXJlY3RYIOeJueaAp+e6p+WIqyJ9LCJ3ZGRtIjp7Im5hbWUiOiJXRERNIDIuMCDpqbHliqjmqKHlnosiLCJyZXF1
-aXJlbWVudCI6IumcgOimgSBXRERNIDIuMCDlj4rku6XkuIrmmL7npLrpqbHliqjmqKHlnosiLCJwYXNzRGV0YWlsIjoi55SxIERp
-cmVjdFggMTIg54m55oCn57qn5Yir5o6o5pat5ruh6LazIFdERE0gMi4wIOWPiuS7peS4iiIsImZhaWxSZWFzb24iOiLmmL7npLrp
-qbHliqjmqKHlnovkvY7kuo4gV0RETSAyLjAiLCJmYWlsRGV0YWlsIjoi5pu05paw5pi+5Y2h6amx5Yqo77yb6ICB5pi+5Y2h5Y+v
-6IO95peg5rOV5ruh6LazIiwidW5rbm93blJlYXNvbiI6IuaXoOazleivu+WPliBXRERNIOeJiOacrCJ9LCJkaXNwbGF5Ijp7Im5h
-bWUiOiLmmL7npLrorr7lpIciLCJyZXF1aXJlbWVudCI6IuWvueinkue6vyDiiaUgOSDoi7Hlr7jvvIzliIbovqjnjocg4omlIDEy
-ODDDlzcyMCIsInBhc3NEZXRhaWwiOiLmu6HotrMgV2luZG93cyAxMSDmmL7npLropoHmsYIiLCJ3YXJuUmVhc29uIjoi5pi+56S6
-6K6+5aSH5L2O5LqOIDkg6Iux5a+45oiW5L2O5LqOIDcyMHDvvIjova/mgKfopoHmsYLvvIkiLCJ1bmtub3duUmVhc29uIjoi5peg
-5rOV6K+75Y+W5pi+56S65Zmo5L+h5oGvIn0sInNzZTQyIjp7Im5hbWUiOiJTU0U0LjIgLyBQT1BDTlQg5oyH5Luk6ZuGIiwicmVx
-dWlyZW1lbnQiOiLpnIDopoHmlK/mjIEgU1NFNC4yIOS4jiBQT1BDTlQg5oyH5Luk6ZuGIiwicGFzc0RldGFpbCI6IuWkhOeQhuWZ
-qOaUr+aMgSBXaW5kb3dzIDExIDI0SDIg5omA6ZyA5oyH5Luk6ZuGIiwiZmFpbFJlYXNvbiI6IuWkhOeQhuWZqOS4jeaUr+aMgSBT
-U0U0LjIgLyBQT1BDTlQiLCJ1bmtub3duUmVhc29uIjoi5peg5rOV5Yik5a6a5oyH5Luk6ZuG5pSv5oyB5oOF5Ya1In0sImdwdCI6
-eyJuYW1lIjoi57O757uf55uY5YiG5Yy66KGoIiwicmVxdWlyZW1lbnQiOiLlu7rorq7kvb/nlKggR1BUIOWIhuWMuuihqCIsInBh
-c3NEZXRhaWwiOiLns7vnu5/nm5jkuLogR1BUIOWIhuWMuuihqCIsIndhcm5SZWFzb24iOiLns7vnu5/nm5jkuLogTUJSIOWIhuWM
-uuihqO+8jOW7uuiurui9rOaNouS4uiBHUFQiLCJ3YXJuRGV0YWlsIjoi5Y+v55SoIG1icjJncHQgL3ZhbGlkYXRlIC9hbGxvd0Z1
-bGxPUyDmo4Dmn6XvvIjor7flhYjlrozmlbTlpIfku73vvInvvIzmnKzlt6XlhbfkuI3ku6PkuLrmiafooYwiLCJ1bmtub3duUmVh
-c29uIjoi5peg5rOV6K+75Y+W57O757uf55uY5YiG5Yy66KGoIn0sIm9zVmVyc2lvbiI6eyJuYW1lIjoi5pON5L2c57O757uf54mI
-5pysIiwicmVxdWlyZW1lbnQiOiJXaW5kb3dzIDEwIDIwMDTvvIgxOTA0Me+8ieWPiuS7peS4iiIsInBhc3NEZXRhaWwiOiLns7vn
-u5/niYjmnKzmu6HotrPljYfnuqfmnaHku7YiLCJ3YXJuUmVhc29uIjoi57O757uf5Li6IFdpbmRvd3MgMTDvvIzlt7Lnu5PmnZ/k
-uLvmtYHmlK/mjIHvvIzlu7rorq7ljYfnuqciLCJmYWlsUmVhc29uIjoi57O757uf54mI5pys6L+H5pen77yM5peg5rOV55u05o6l
-5Y2H57qnIiwiZmFpbERldGFpbCI6IuWFiOWNh+e6p+WIsCBXaW5kb3dzIDEwIDIwMDQg5Y+K5Lul5LiK77yI5o6o6I2QIDIySDLv
-vInlho3ogIPomZHljYfnuqcgV2luZG93cyAxMSIsInVua25vd25SZWFzb24iOiLml6Dms5Xor7vlj5bns7vnu5/niYjmnKwifX0s
-InNjb3JlIjp7Im5vdGVzIjp7ImNwdSI6InswfSDmoLggezF9IOe6v+eoiyDCtyB7Mn0gwrcg5Z+65YeGIHszfSBNSHoiLCJjcHVH
-ZW5lcmljIjoiezB9IOaguCB7MX0g57q/56iLIMK3IOWfuuWHhiB7Mn0gTUh6IiwibWVtb3J5IjoiezB9IEdCIHsxfSDCtyDlt7Ln
-lKggezJ9JSDCtyB7M30iLCJzdG9yYWdlIjoiezB9IMK3IOeKtuaAgSB7MX0gwrcg57O757uf55uY5Ymp5L2ZIHsyfSUiLCJncHUi
-OiJ7MH0gwrcgezF9Iiwic3lzdGVtIjoi5r+A5rS7IHswfSDCtyDlronlhajlkK/liqggezF9IMK3IOezu+e7n+ebmOWJqeS9mSB7
-Mn0gR0Igwrcg5bey6L+Q6KGMIHszfSDlsI/ml7YifX19
+5p2D6ZmQ77yJIiwicGVWZXJzaW9uIjoiUEUg5p6E5p62IHswfSIsImRyaXZlckRhdGVNb250aHMiOiJ7MH3vvIh7MX0g5Liq5pyI
+5YmN77yJIiwibm9EYXRhIjoi5peg5rOV6K+75Y+WIn0sInNlY3Rpb25zIjp7InN5c3RlbSI6Iuezu+e7n+S/oeaBryIsIm1vdGhl
+cmJvYXJkIjoi5Li75p2/5LiO5Zu65Lu2IiwiY3B1Ijoi5aSE55CG5ZmoIiwibWVtb3J5Ijoi5YaF5a2YIiwiZ3B1Ijoi5pi+5Y2h
+IiwiZGlzcGxheSI6IuaYvuekuuWZqCIsImRpc2siOiLlrZjlgqgiLCJuZXR3b3JrIjoi572R57ucIiwicnVudGltZSI6Iui/kOih
+jOeOr+WigyIsInNlY3VyaXR5Ijoi5a6J5YWo54q25oCBIiwiY29tcGF0Ijoi5YW85a655oCn5Yik5a6aIiwic2NvcmUiOiLlgaXl
+urfor4TliIYifSwid2FybmluZ3MiOnsibm9BZG1pblRlbXAiOiLmnKrku6XnrqHnkIblkZjouqvku73ov5DooYzvvJpDUFUgLyDk
+uLvmnb/muKnluqbkuI7po47miYfovazpgJ/kuI3lj6/nlKjvvIjpnIDnrqHnkIblkZjmnYPpmZDkuI7kvKDmhJ/lmajpqbHliqjv
+vIznu7/oibLniYjpu5jorqTkuI3mj5DkvpvvvIkiLCJub0FkbWluU21hcnQiOiLmnKrku6XnrqHnkIblkZjouqvku73ov5DooYzv
+vJrnoaznm5ggU01BUlQg5Y6f5aeL5piO57uG77yI5rip5bqm44CB6YCa55S15pe26Ze044CB56Oo5o2f44CB6YCa55S15qyh5pWw
+77yJ5LiN5Y+v55So77yM5YGl5bq35bqm5LuF5p2l6Ieq57O757uf5LiK5oqlIiwibm9BZG1pblRwbSI6IuacquS7peeuoeeQhuWR
+mOi6q+S7vei/kOihjO+8mlRQTSDor6bnu4bnirbmgIHvvIhHZXQtVHBtIC8gV2luMzJfVHBt77yJ5LiN5Y+v6K+777yM5bey5L6d
+5o2uIEFDUEkg6K6+5aSH5p6a5Li+5o6o5pat54mI5pysIiwibm9BZG1pbkJpdGxvY2tlciI6IuacquS7peeuoeeQhuWRmOi6q+S7
+vei/kOihjO+8mkJpdExvY2tlciDliqDlr4bnirbmgIHkuI3lj6/nlKgiLCJub0FkbWluU2VjdXJlQm9vdCI6IuacquS7peeuoeeQ
+huWRmOi6q+S7vei/kOihjO+8mkNvbmZpcm0tU2VjdXJlQm9vdFVFRkkg5LiN5Y+v55So77yM5bey5pS555So5rOo5YaM6KGo6K+7
+5Y+W5a6J5YWo5ZCv5Yqo54q25oCBIiwicmVsaWFiaWxpdHlVbmF2YWlsYWJsZSI6IuehrOebmOWPr+mdoOaAp+iuoeaVsOWZqO+8
+iOa4qeW6piAvIOmAmueUteaXtumXtCAvIOejqOaNn++8ieS4jeWPr+ivu++8muivpeehrOebmOS4jeaUr+aMgeaIlumcgOimgeeu
+oeeQhuWRmOadg+mZkCIsIm1vbml0b3JVbmF2YWlsYWJsZSI6IuacquiDveivu+WPluaYvuekuuWZqCBFRElEIOS/oeaBr++8iFdt
+aU1vbml0b3JJRCDkuI3lj6/nlKjvvIkiLCJhY3RpdmF0aW9uRmFpbGVkIjoi57O757uf5r+A5rS754q25oCB5p+l6K+i6LaF5pe2
+5oiW5aSx6LSl77yaezB9IiwiYWN0aXZhdGlvblVua25vd24iOiLlt7Lor7vlj5borrjlj6/kv6Hmga/vvIzkvYbml6Dms5XliKTm
+lq3mv4DmtLvnirbmgIEiLCJ3c2xMaXN0RmFpbGVkIjoiV1NMIOW3suWuieijhe+8jOS9huaXoOazleWIl+WHuuW3suWuieijheWP
+keihjOeJiO+8mnswfSIsInNlY3Rpb25GYWlsZWQiOiLph4fpm4bpobnjgIx7MH3jgI3lpLHotKXvvJp7MX0iLCJzZWN0aW9uU2xv
+dyI6IumHh+mbhumhueOAjHswfeOAjeiAl+aXtiB7MX0gbXPvvIzlgY/mhaIiLCJkb3RuZXRGYWxsYmFjayI6IuacquaJvuWIsCBk
+b3RuZXQg5ZG95Luk77yM5bey5pS55Li65omr5o+PIEM6XFxQcm9ncmFtIEZpbGVzXFxkb3RuZXRcXHNoYXJlZCDnm67lvZUiLCJ2
+Y3BwRW1wdHkiOiLmnKrku47ljbjovb3ms6jlhozooajor7vliLAgVkMrKyDov5DooYzlupPkv6Hmga8iLCJ0cG1Vbmtub3duIjoi
+VFBNIOeKtuaAgeaXoOazleWIpOWumu+8mumcgOimgeeuoeeQhuWRmOadg+mZkOaIluivpeiuvuWkh+S4jeaUr+aMgSIsInNlY3Vy
+ZUJvb3RVbmtub3duIjoi5a6J5YWo5ZCv5Yqo54q25oCB5peg5rOV5Yik5a6a77ya6Z2eIFVFRkkg5Zu65Lu25oiW6K+75Y+W6KKr
+5ouS57udIiwiZGlzcGxheU1pc3NpbmciOiLmnKrog73or7vlj5bmmL7npLrlmajkv6Hmga/vvIzmmL7npLrnm7jlhbPlrZfmrrXl
+t7Lnva7kuLogbnVsbCAvIOepuuaVsOe7hCIsIm5ldHdvcmtQcm9iZSI6IuWklue9kei/numAmuaAp+aOoua1i+Wksei0pe+8iOWP
+r+iDveaXoOe9kee7nOaIluiiq+mYsueBq+WimeaLpuaIqu+8iSIsImRuc1Byb2JlIjoiRE5TIOino+aekOWksei0pe+8jGRuc09r
+IOW3sue9ruS4uiBmYWxzZSIsIm5vR3B1Ijoi5pyq6K+75Y+W5Yiw5pi+5Y2h5L+h5oGv77yMZ3B1cyDkuLrnqbrmlbDnu4QiLCJj
+cHVGYWxsYmFjayI6IuacquiDveS7jiBXTUkg6K+75Y+W5aSE55CG5Zmo5L+h5oGv77yM5bey5bCd6K+V5rOo5YaM6KGo5YWc5bqV
+Iiwibm9PcyI6IuacquiDveivu+WPluaTjeS9nOezu+e7n+S/oeaBr++8jOW3sueUqOeOr+Wig+WPmOmHj+WFnOW6lSIsInNtYXJ0
+RGV0YWlsIjoiU01BUlQg5rip5bqmIC8g6YCa55S15qyh5pWw6ZyA6KaB566h55CG5ZGY5p2D6ZmQ77yM5bey572u5Li6IG51bGwi
+LCJoeXBlcnZVbmtub3duIjoi5peg5rOV5Yik5a6a5piv5ZCm5ZCv55SoIEh5cGVyLVYiLCJwb3dlclBsYW5Vbmtub3duIjoi5peg
+5rOV6K+75Y+W5b2T5YmN55S15rqQ6K6h5YiSIiwibm9SZWxpYWJpbGl0eSI6Ik1TRlRfU3RvcmFnZVJlbGlhYmlsaXR5Q291bnRl
+ciDkuI3lj6/nlKjvvIznoaznm5jmuKnluqYgLyDpgJrnlLXml7bpl7QgLyDno6jmjZ/luqbkuLogbnVsbCJ9LCJlbGV2YXRpb25H
+YWlucyI6WyJDUFUgLyDkuLvmnb/muKnluqbkuI7po47miYfovazpgJ/vvIjpnIDnrqHnkIblkZjmnYPpmZDkuI7kvKDmhJ/lmajp
+qbHliqjvvIkiLCLnoaznm5ggU01BUlQg5Y6f5aeL5bGe5oCn77ya5rip5bqm44CB6YCa55S15pe26Ze044CB6YCa55S15qyh5pWw
+44CB56Oo5o2f5bqmIiwiVFBNIDIuMCDor6bnu4bnirbmgIHvvIhHZXQtVHBtIC8gV2luMzJfVHBt77yJIiwiQml0TG9ja2VyIOez
+u+e7n+ebmOWKoOWvhueKtuaAgSIsIuWuieWFqOWQr+WKqOeKtuaAgeagoemqjO+8iENvbmZpcm0tU2VjdXJlQm9vdFVFRknvvIki
+XSwiY29tcGF0Ijp7ImNwdTY0Ijp7Im5hbWUiOiI2NCDkvY3lpITnkIblmagiLCJyZXF1aXJlbWVudCI6IumcgOimgSA2NCDkvY3l
+pITnkIblmajvvIh4NjQgLyBBUk02NO+8iSIsInBhc3NEZXRhaWwiOiLlpITnkIblmajkuI7ns7vnu5/lnYfkuLogNjQg5L2NIiwi
+ZmFpbFJlYXNvbiI6IuWkhOeQhuWZqOS4uiAzMiDkvY3mnrbmnoTvvIzml6Dms5Xlronoo4UgNjQg5L2N57O757ufIiwiZmFpbERl
+dGFpbCI6IumcgOimgeabtOaNouaUr+aMgSA2NCDkvY3nmoTnoazku7YiLCJ1bmtub3duUmVhc29uIjoi5pyq6IO96K+75Y+W5aSE
+55CG5Zmo5L2N5a69In0sImNwdU1vZGVsIjp7Im5hbWUiOiJDUFUg5Z6L5Y+377yIV2luZG93cyAxMSDmlK/mjIHliJfooajvvIki
+LCJyZXF1aXJlbWVudCI6IkludGVsIOesrCA4IOS7o+WPiuS7peS4iiAvIEFNRCBaZW4gMu+8iFJ5emVuIDIwMDAg57O75YiX77yJ
+5Y+K5Lul5LiKIiwicGFzc0RldGFpbCI6IuaMieS7o+mZheinhOWImeWRveS4rSBXaW5kb3dzIDExIOWumOaWueaUr+aMgeiMg+Wb
+tCIsIndhcm5SZWFzb24iOiLml6Dms5Xoh6rliqjliKTlrpror6Xlnovlj7fmmK/lkKblnKjlvq7ova/lrpjmlrnmlK/mjIHliJfo
+oajlhoXvvIzor7fmoLjlr7nlnovlj7ciLCJ3YXJuRGV0YWlsIjoi5a6Y5pa55pSv5oyB5YiX6KGo77yaaHR0cHM6Ly9sZWFybi5t
+aWNyb3NvZnQuY29tL3poLWNuL3dpbmRvd3MtaGFyZHdhcmUvZGVzaWduL21pbmltdW0vd2luZG93cy1wcm9jZXNzb3ItcmVxdWly
+ZW1lbnRzIiwiZmFpbFJlYXNvbiI6IuivpeWkhOeQhuWZqOS4jeWcqCBXaW5kb3dzIDExIOWumOaWueaUr+aMgeiMg+WbtOWGhSIs
+ImZhaWxEZXRhaWwiOiLlj6/nu6fnu63kvb/nlKjlvZPliY3ns7vnu5/niYjmnKzvvIzljYfnuqfpnIDopoHmm7TmjaLnoazku7Yi
+fSwiY3B1Q29yZXMiOnsibmFtZSI6IueJqeeQhuaguOW/g+aVsCIsInJlcXVpcmVtZW50Ijoi6Iez5bCRIDIg5Liq54mp55CG5qC4
+5b+DIiwicGFzc0RldGFpbCI6Iua7oei2syBXaW5kb3dzIDExIOacgOWwkeaguOW/g+imgeaxgiIsImZhaWxSZWFzb24iOiLniann
+kIbmoLjlv4PlsJHkuo4gMiDkuKoiLCJmYWlsRGV0YWlsIjoi6ZyA6KaB5pu06auY6KeE5qC855qE5aSE55CG5ZmoIn0sImNwdUNs
+b2NrIjp7Im5hbWUiOiLlpITnkIblmajkuLvpopEiLCJyZXF1aXJlbWVudCI6IuS4jeS9juS6jiAxIEdIeiIsInBhc3NEZXRhaWwi
+OiLmu6HotrMgV2luZG93cyAxMSDmnIDkvY7kuLvpopHopoHmsYIiLCJmYWlsUmVhc29uIjoi5Li76aKR5L2O5LqOIDEgR0h6Iiwi
+ZmFpbERldGFpbCI6IumcgOimgeabtOmrmOS4u+mikeeahOWkhOeQhuWZqCJ9LCJtZW1TaXplIjp7Im5hbWUiOiLlhoXlrZjlrrnp
+h48iLCJyZXF1aXJlbWVudCI6IuiHs+WwkSA0IEdC77yI5bu66K6uIDggR0Ig5Lul5LiK77yJIiwicGFzc0RldGFpbCI6Iua7oei2
+syBXaW5kb3dzIDExIOacgOS9juWGheWtmOimgeaxgiIsIndhcm5SZWFzb24iOiLlhoXlrZjkuLogNOKAkzggR0LvvIzlj6/ku6Xl
+ronoo4XkvYblu7rorq7liqDliLAgOCBHQiDku6XkuIoiLCJmYWlsUmVhc29uIjoi5YaF5a2Y5L2O5LqOIDQgR0LvvIzml6Dms5Xm
+u6HotrMgV2luZG93cyAxMSDopoHmsYIiLCJmYWlsRGV0YWlsIjoi5bu66K6u5Y2H57qn5YaF5a2Y5p2hIiwidW5rbm93blJlYXNv
+biI6IuaXoOazleivu+WPlueJqeeQhuWGheWtmOWuuemHjyJ9LCJkaXNrU3BhY2UiOnsibmFtZSI6Iuezu+e7n+ebmOWPr+eUqOep
+uumXtCIsInJlcXVpcmVtZW50Ijoi6Iez5bCRIDY0IEdCIOWPr+eUqOepuumXtCIsInBhc3NEZXRhaWwiOiLmu6HotrMgV2luZG93
+cyAxMSDlronoo4XkuI7mm7TmlrDmiYDpnIDnqbrpl7QiLCJmYWlsUmVhc29uIjoi57O757uf55uY5Y+v55So56m66Ze05LiN6Laz
+IDY0IEdCIiwiZmFpbERldGFpbCI6Iua4heeQhuejgeebmOaIluabtOaNouabtOWkp+WuuemHj+ehrOebmCIsInVua25vd25SZWFz
+b24iOiLml6Dms5Xor7vlj5bns7vnu5/nm5jlrrnph48ifSwidWVmaSI6eyJuYW1lIjoiVUVGSSDlm7rku7YiLCJyZXF1aXJlbWVu
+dCI6IumcgOimgSBVRUZJIOW8leWvvOaooeW8jyIsInBhc3NEZXRhaWwiOiLlvZPliY3kuLogVUVGSSDlvJXlr7wiLCJmYWlsUmVh
+c29uIjoi5b2T5YmN5Li6IExlZ2FjeSBCSU9TIOW8leWvvCIsImZhaWxEZXRhaWwiOiLliIfmjaIgVUVGSSDpgJrluLjpnIDopoEg
+TUJSMkdQVCDovazmjaLliIbljLrvvIjliqHlv4XlhYjlpIfku73vvInmiJbph43oo4Xns7vnu58iLCJ1bmtub3duUmVhc29uIjoi
+5peg5rOV5Yik5a6a5Zu65Lu257G75Z6LIn0sInNlY3VyZUJvb3QiOnsibmFtZSI6IuWuieWFqOWQr+WKqO+8iFNlY3VyZSBCb290
+77yJIiwicmVxdWlyZW1lbnQiOiLpnIDopoHmlK/mjIHlubblt7LlkK/nlKggU2VjdXJlIEJvb3QiLCJwYXNzRGV0YWlsIjoi5a6J
+5YWo5ZCv5Yqo5bey5ZCv55SoIiwid2FyblJlYXNvbiI6IuS4u+adv+aUr+aMgeWuieWFqOWQr+WKqOS9huW9k+WJjeacquWQr+eU
+qO+8jOWPr+WcqCBCSU9TIC8gVUVGSSDkuK3lvIDlkK8iLCJ3YXJuRGV0YWlsIjoiQklPUyDihpIgU2VjdXJpdHkg4oaSIFNlY3Vy
+ZSBCb290IOKGkiDorr7kuLogRW5hYmxlZCIsImZhaWxSZWFzb24iOiLlm7rku7bkuI3mlK/mjIHlronlhajlkK/liqgiLCJ1bmtu
+b3duUmVhc29uIjoi5peg5rOV6K+75Y+W5a6J5YWo5ZCv5Yqo54q25oCBIn0sInRwbSI6eyJuYW1lIjoiVFBNIDIuMCIsInJlcXVp
+cmVtZW50Ijoi6ZyA6KaBIFRQTSAyLjDvvIjlj6/kv6HlubPlj7DmqKHlnZfvvIkiLCJwYXNzRGV0YWlsIjoiVFBNIDIuMCDlt7Ll
+kK/nlKgiLCJmYWlsUmVhc29uIjoiVFBNIOeJiOacrOS4uiAxLjLvvIzkvY7kuo4gV2luZG93cyAxMSDopoHmsYIiLCJmYWlsUmVh
+c29uTWlzc2luZyI6IuacquajgOa1i+WIsCBUUE0iLCJmYWlsRGV0YWlsIjoi6YeN5ZCv6L+b5YWlIEJJT1MgLyBVRUZJ77yI5byA
+5py65oyJIERlbCAvIEYyIC8gRjEw77yJ4oaSIFNlY3VyaXR5IC8gVHJ1c3RlZCBDb21wdXRpbmcg4oaSIOWQr+eUqCBUUE0gMi4w
+IC8gUFRUIC8gZlRQTSIsIndhcm5EaXNhYmxlZCI6IlRQTSDkvLzkuY7lnKjlm7rku7bkuK3ooqvnpoHnlKjvvIzor7flnKggQklP
+UyAvIFVFRkkg5Lit5ZCv55SoIFRQTSAyLjAiLCJ1bmtub3duUmVhc29uIjoiVFBNIOeKtuaAgeaXoOazleWIpOWumu+8iOmcgOim
+geeuoeeQhuWRmOadg+mZkOaIluivpeiuvuWkh+S4jeaUr+aMge+8iSJ9LCJkeDEyIjp7Im5hbWUiOiJEaXJlY3RYIDEyIiwicmVx
+dWlyZW1lbnQiOiLpnIDopoHmmL7ljaHmlK/mjIEgRGlyZWN0WCAxMu+8iOeJueaAp+e6p+WIqyAxMl8wIOWPiuS7peS4iu+8iSIs
+InBhc3NEZXRhaWwiOiLmmL7ljaHpqbHliqjmlK/mjIEgRGlyZWN0WCAxMiIsImZhaWxSZWFzb24iOiLmmL7ljaHmiJbpqbHliqjk
+uI3mlK/mjIEgRGlyZWN0WCAxMiIsImZhaWxEZXRhaWwiOiLlhYjlsJ3or5Xmm7TmlrDmmL7ljaHpqbHliqjvvJvku43kuI3mlK/m
+jIHliJnpnIDmm7TmjaLmmL7ljaEiLCJ1bmtub3duUmVhc29uIjoi5peg5rOV6K+75Y+WIERpcmVjdFgg54m55oCn57qn5YirIn0s
+IndkZG0iOnsibmFtZSI6IldERE0gMi4wIOmpseWKqOaooeWeiyIsInJlcXVpcmVtZW50Ijoi6ZyA6KaBIFdERE0gMi4wIOWPiuS7
+peS4iuaYvuekuumpseWKqOaooeWeiyIsInBhc3NEZXRhaWwiOiLnlLEgRGlyZWN0WCAxMiDnibnmgKfnuqfliKvmjqjmlq3mu6Ho
+trMgV0RETSAyLjAg5Y+K5Lul5LiKIiwiZmFpbFJlYXNvbiI6IuaYvuekuumpseWKqOaooeWei+S9juS6jiBXRERNIDIuMCIsImZh
+aWxEZXRhaWwiOiLmm7TmlrDmmL7ljaHpqbHliqjvvJvogIHmmL7ljaHlj6/og73ml6Dms5Xmu6HotrMiLCJ1bmtub3duUmVhc29u
+Ijoi5peg5rOV6K+75Y+WIFdERE0g54mI5pysIn0sImRpc3BsYXkiOnsibmFtZSI6IuaYvuekuuiuvuWkhyIsInJlcXVpcmVtZW50
+Ijoi5a+56KeS57q/IOKJpSA5IOiLseWvuO+8jOWIhui+qOeOhyDiiaUgMTI4MMOXNzIwIiwicGFzc0RldGFpbCI6Iua7oei2syBX
+aW5kb3dzIDExIOaYvuekuuimgeaxgiIsIndhcm5SZWFzb24iOiLmmL7npLrorr7lpIfkvY7kuo4gOSDoi7Hlr7jmiJbkvY7kuo4g
+NzIwcO+8iOi9r+aAp+imgeaxgu+8iSIsInVua25vd25SZWFzb24iOiLml6Dms5Xor7vlj5bmmL7npLrlmajkv6Hmga8ifSwic3Nl
+NDIiOnsibmFtZSI6IlNTRTQuMiAvIFBPUENOVCDmjIfku6Tpm4YiLCJyZXF1aXJlbWVudCI6IumcgOimgeaUr+aMgSBTU0U0LjIg
+5LiOIFBPUENOVCDmjIfku6Tpm4YiLCJwYXNzRGV0YWlsIjoi5aSE55CG5Zmo5pSv5oyBIFdpbmRvd3MgMTEgMjRIMiDmiYDpnIDm
+jIfku6Tpm4YiLCJmYWlsUmVhc29uIjoi5aSE55CG5Zmo5LiN5pSv5oyBIFNTRTQuMiAvIFBPUENOVCIsInVua25vd25SZWFzb24i
+OiLml6Dms5XliKTlrprmjIfku6Tpm4bmlK/mjIHmg4XlhrUifSwiZ3B0Ijp7Im5hbWUiOiLns7vnu5/nm5jliIbljLrooagiLCJy
+ZXF1aXJlbWVudCI6IuW7uuiuruS9v+eUqCBHUFQg5YiG5Yy66KGoIiwicGFzc0RldGFpbCI6Iuezu+e7n+ebmOS4uiBHUFQg5YiG
+5Yy66KGoIiwid2FyblJlYXNvbiI6Iuezu+e7n+ebmOS4uiBNQlIg5YiG5Yy66KGo77yM5bu66K6u6L2s5o2i5Li6IEdQVCIsIndh
+cm5EZXRhaWwiOiLlj6/nlKggbWJyMmdwdCAvdmFsaWRhdGUgL2FsbG93RnVsbE9TIOajgOafpe+8iOivt+WFiOWujOaVtOWkh+S7
+ve+8ie+8jOacrOW3peWFt+S4jeS7o+S4uuaJp+ihjCIsInVua25vd25SZWFzb24iOiLml6Dms5Xor7vlj5bns7vnu5/nm5jliIbl
+jLrooagifSwib3NWZXJzaW9uIjp7Im5hbWUiOiLmk43kvZzns7vnu5/niYjmnKwiLCJyZXF1aXJlbWVudCI6IldpbmRvd3MgMTAg
+MjAwNO+8iDE5MDQx77yJ5Y+K5Lul5LiKIiwicGFzc0RldGFpbCI6Iuezu+e7n+eJiOacrOa7oei2s+WNh+e6p+adoeS7tiIsIndh
+cm5SZWFzb24iOiLns7vnu5/kuLogV2luZG93cyAxMO+8jOW3sue7k+adn+S4u+a1geaUr+aMge+8jOW7uuiuruWNh+e6pyIsImZh
+aWxSZWFzb24iOiLns7vnu5/niYjmnKzov4fml6fvvIzml6Dms5Xnm7TmjqXljYfnuqciLCJmYWlsRGV0YWlsIjoi5YWI5Y2H57qn
+5YiwIFdpbmRvd3MgMTAgMjAwNCDlj4rku6XkuIrvvIjmjqjojZAgMjJIMu+8ieWGjeiAg+iZkeWNh+e6pyBXaW5kb3dzIDExIiwi
+dW5rbm93blJlYXNvbiI6IuaXoOazleivu+WPluezu+e7n+eJiOacrCJ9LCJncHVEcml2ZXIiOnsibmFtZSI6IuaYvuWNoempseWK
+qCIsInJlcXVpcmVtZW50Ijoi6ZyA6KaB5bey5a6J6KOF5Y6C5ZWG5pi+5Y2h6amx5Yqo77yIV0RETSAyLjAg5Y+K5Lul5LiK77yJ
+IiwicGFzc0RldGFpbCI6IumpseWKqOW3suato+W4uOWuieijhe+8jOaUr+aMgSBEaXJlY3RYIDEyIC8gV0RETSAyLjArIiwid2Rk
+bUluZmVycmVkIjoi77yIV0RETSDnlLEgRFgxMiDnibnmgKfnuqfliKvmjqjmlq3vvIkiLCJmYWlsUmVhc29uIjoi5pi+5Y2h6amx
+5Yqo5byC5bi45oiW5pyq5a6J6KOFIiwiZmFpbERldGFpbCI6IuWIsOaYvuWNoeWOguWVhuWumOe9keabtOaWsOmpseWKqO+8iE5W
+SURJQSAvIEFNRCAvIEludGVs77yJIiwidW5rbm93blJlYXNvbiI6IuaXoOazleivu+WPluaYvuWNoempseWKqOS/oeaBryJ9LCJn
+cHVEcml2ZXJBZ2UiOnsibmFtZSI6IuaYvuWNoempseWKqOaXtuaViCIsInJlcXVpcmVtZW50Ijoi6amx5Yqo5Y+R5biD5pel5pyf
+5LiN6LaF6L+HIDE4IOS4quaciCIsInBhc3NEZXRhaWwiOiLpqbHliqjovoPmlrDvvIzmnKrotoXov4cgMTgg5Liq5pyIIiwid2Fy
+blJlYXNvbiI6IumpseWKqOW3suWPkeW4gyB7MH0g5Liq5pyI77yM5bu66K6u5pu05pawIiwid2FybkRldGFpbCI6IuaWsOmpseWK
+qOmAmuW4uOS/ruWkjea4uOaIj+WFvOWuueaAp+S4juWuieWFqOmXrumimCIsInVua25vd25SZWFzb24iOiLml6Dms5Xor7vlj5bp
+qbHliqjml6XmnJ8ifX0sInNvZnR3YXJlIjp7ImNhdGVnb3JpZXMiOnsiZGF0YWJhc2UiOiLmlbDmja7lupMiLCJjb250YWluZXIi
+OiLlrrnlmajkuI7omZrmi5/mnLoiLCJ3ZWJTZXJ2ZXIiOiJXZWIg5pyN5Yqh5ZmoIiwibGFuZ3VhZ2UiOiLnvJbnqIvor63oqIAi
+LCJkZXZUb29sIjoi5byA5Y+R5bel5YW3IiwiY29tbW9uIjoi5bi455So6L2v5Lu2In0sIm5hbWVzIjp7IndlY2hhdCI6IuW+ruS/
+oSIsIm5ldGVhc2UiOiLnvZHmmJPkupHpn7PkuZAifSwiZGV0YWlscyI6eyJwb3J0IjoiezB9IOerr+WPoyIsImVuZ2luZSI6IuW8
+leaTjiB7MH0iLCJjbGllbnQiOiLlrqLmiLfnq68gezB9Iiwic2RrQ291bnQiOiLlt7Llronoo4UgezB9IOS4qiBTREvvvJp7MX0i
+LCJpbnN0YW5jZSI6IuWunuS+iyB7MH0iLCJzcWxpdGVEbGwiOiLns7vnu5/oh6rluKYgU1FMaXRlIOaVsOaNruW6kyIsIndpdGhW
+aXN1YWxTdHVkaW8iOiLpmo8gVmlzdWFsIFN0dWRpbyDlronoo4UiLCJhbmRyb2lkUGxhdGZvcm1zIjoicGxhdGZvcm0tdG9vbHMg
+KyB7MH0g5Liq5bmz5Y+wIn19LCJzY29yZSI6eyJub3RlcyI6eyJjcHUiOiJ7MH0g5qC4IHsxfSDnur/nqIsgwrcgezJ9IMK3IOWf
+uuWHhiB7M30gTUh6IiwiY3B1R2VuZXJpYyI6InswfSDmoLggezF9IOe6v+eoiyDCtyDln7rlh4YgezJ9IE1IeiIsIm1lbW9yeSI6
+InswfSBHQiB7MX0gwrcg5bey55SoIHsyfSUgwrcgezN9Iiwic3RvcmFnZSI6InswfSDCtyDnirbmgIEgezF9IMK3IOezu+e7n+eb
+mOWJqeS9mSB7Mn0lIiwiZ3B1IjoiezB9IMK3IHsxfSIsInN5c3RlbSI6Iua/gOa0uyB7MH0gwrcg5a6J5YWo5ZCv5YqoIHsxfSDC
+tyDns7vnu5/nm5jliankvZkgezJ9IEdCIMK3IOW3sui/kOihjCB7M30g5bCP5pe2In19fQ==
 '@
 # <<< TEXT-BLOCK-END
 
@@ -383,6 +400,131 @@ function Add-SectionFailure {
     param([string]$Name, $ErrorText)
     $label = Get-SectionLabel $Name
     Add-Warn ($script:T.warnings.sectionFailed -f $label, [string]$ErrorText)
+}
+
+# ---------- 2b. Process / installed-software helpers ----------
+function Invoke-CommandText {
+    # Runs a native command with a hard timeout and returns stdout + stderr as text.
+    # Used for version probes such as "php -v" / "docker --version" so a hung tool can
+    # never block the whole scan. Also refuses to start new probes when the scan is
+    # already close to the 8s budget.
+    param(
+        [string]$FilePath,
+        [string[]]$Arguments = @(),
+        [int]$TimeoutMs = 1200
+    )
+    if ([string]::IsNullOrWhiteSpace($FilePath)) { return $null }
+    if ($null -eq $Arguments) { $Arguments = @() }
+    if ($null -ne $script:TotalSw -and $script:TotalSw.ElapsedMilliseconds -gt 6500) { return $null }
+    $ext = [System.IO.Path]::GetExtension($FilePath)
+    $isScript = ($ext -eq '.cmd' -or $ext -eq '.bat')
+    try {
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        if ($isScript) {
+            $psi.FileName = [string]$env:ComSpec
+            $psi.Arguments = '/d /c ""' + $FilePath + '" ' + ($Arguments -join ' ') + '"'
+        } else {
+            $psi.FileName = $FilePath
+            $psi.Arguments = ($Arguments -join ' ')
+        }
+        $psi.UseShellExecute = $false
+        $psi.RedirectStandardOutput = $true
+        $psi.RedirectStandardError = $true
+        $psi.CreateNoWindow = $true
+        $psi.WorkingDirectory = [System.IO.Path]::GetDirectoryName($FilePath)
+        if ([string]::IsNullOrWhiteSpace($psi.WorkingDirectory)) { $psi.WorkingDirectory = [string]$env:SystemRoot }
+        $proc = New-Object System.Diagnostics.Process
+        $proc.StartInfo = $psi
+        if (-not $proc.Start()) { return $null }
+        $outTask = $proc.StandardOutput.ReadToEndAsync()
+        $errTask = $proc.StandardError.ReadToEndAsync()
+        if (-not $proc.WaitForExit($TimeoutMs)) {
+            try { $proc.Kill() } catch { }
+            return $null
+        }
+        $outText = ''
+        $errText = ''
+        try { $outText = [string]$outTask.Result } catch { }
+        try { $errText = [string]$errTask.Result } catch { }
+        return ($outText + $errText)
+    } catch {
+        return $null
+    }
+}
+
+function Find-FirstCommandPath {
+    param([string[]]$Names, [string[]]$ExtraDirs = @())
+    foreach ($candidate in $Names) {
+        if ([string]::IsNullOrWhiteSpace($candidate)) { continue }
+        try {
+            $cmd = Get-Command -Name $candidate -ErrorAction SilentlyContinue
+            if ($null -ne $cmd -and $cmd.Source) { return [string]$cmd.Source }
+        } catch { }
+    }
+    foreach ($dir in $ExtraDirs) {
+        if ([string]::IsNullOrWhiteSpace($dir) -or -not (Test-Path -LiteralPath $dir)) { continue }
+        foreach ($candidate in $Names) {
+            $fullPath = Join-Path $dir $candidate
+            if (Test-Path -LiteralPath $fullPath) { return $fullPath }
+        }
+    }
+    return $null
+}
+
+function Get-HighestVersionString {
+    param([string[]]$Versions)
+    $best = $null
+    $bestVer = $null
+    foreach ($candidate in $Versions) {
+        if ([string]::IsNullOrWhiteSpace($candidate)) { continue }
+        $verObj = $null
+        try { $verObj = [version]($candidate -replace '[^0-9.].*$', '') } catch { $verObj = $null }
+        if ($null -eq $verObj) { continue }
+        if ($null -eq $bestVer -or $verObj -gt $bestVer) { $bestVer = $verObj; $best = $candidate }
+    }
+    return $best
+}
+
+function Register-Software {
+    # Adds one SoftwareItem-shaped entry (deduplicated by name/key, merging missing parts).
+    param(
+        [string]$Name,
+        $Version,
+        $Path,
+        [string]$Category,
+        $Source,
+        $Running,
+        $Detail,
+        [string]$Key = ''
+    )
+    if ([string]::IsNullOrWhiteSpace($Name)) { return }
+    if ($null -eq $script:SoftwareSeen) { $script:SoftwareSeen = @{} }
+    if ($null -eq $script:SoftwareItems) { $script:SoftwareItems = @() }
+    $dedupeKey = $Name.ToLowerInvariant()
+    if (-not [string]::IsNullOrWhiteSpace($Key)) { $dedupeKey = $Key.ToLowerInvariant() }
+    $cleanVersion = Clean-Text $Version
+    if ($null -ne $cleanVersion -and $cleanVersion -match '^[vV](\d.*)$') { $cleanVersion = $matches[1] }
+    $cleanPath = Clean-Text $Path
+    $cleanDetail = Clean-Text $Detail
+    if ($script:SoftwareSeen.ContainsKey($dedupeKey)) {
+        $existing = $script:SoftwareSeen[$dedupeKey]
+        if ($null -eq $existing.version -and $null -ne $cleanVersion) { $existing.version = $cleanVersion }
+        if ($null -eq $existing.path -and $null -ne $cleanPath) { $existing.path = $cleanPath }
+        if ($null -eq $existing.running -and $null -ne $Running) { $existing.running = $Running }
+        if ($null -eq $existing.detail -and $null -ne $cleanDetail) { $existing.detail = $cleanDetail }
+        return
+    }
+    $item = [ordered]@{
+        name     = $Name
+        version  = $cleanVersion
+        path     = $cleanPath
+        category = $Category
+        source   = $Source
+        running  = $Running
+        detail   = $cleanDetail
+    }
+    $script:SoftwareSeen[$dedupeKey] = $item
+    $script:SoftwareItems += $item
 }
 
 # ---------- 2. System / firmware helpers ----------
@@ -1484,6 +1626,7 @@ $runtime = [ordered]@{
     java = @(); node = $null; python = $null; git = $null
     wsl = [ordered]@{ installed = $null; version = $null; distros = @() }
     powershellVersion = $null
+    software = @()
 }
 $swSec = Start-Timer
 try {
@@ -1544,44 +1687,60 @@ try {
     if ($drt.Count -gt 80) { $drt = @($drt | Select-Object -First 80) }
     $runtime.dotnetRuntimes = $drt
 
+    # Read the uninstall registry ONCE; VC++ aggregation and the installed-software
+    # detection below both filter this in-memory list (no per-software CIM/registry churn).
+    $uninstallEntries = @()
+    foreach ($uninstallRoot in @(
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall',
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+    )) {
+        $uninstallKeys = @(Get-ChildItem -LiteralPath $uninstallRoot -ErrorAction SilentlyContinue)
+        foreach ($uninstallKey in $uninstallKeys) {
+            if ($null -eq $uninstallKey) { continue }
+            $uninstallProps = Get-ItemProperty -LiteralPath $uninstallKey.PSPath -ErrorAction SilentlyContinue
+            if ($null -eq $uninstallProps) { continue }
+            $uninstallName = [string]$uninstallProps.DisplayName
+            if ([string]::IsNullOrWhiteSpace($uninstallName)) { continue }
+            $uninstallEntries += [ordered]@{
+                name      = $uninstallName
+                version   = Clean-Text ([string]$uninstallProps.DisplayVersion)
+                location  = Clean-Text ([string]$uninstallProps.InstallLocation)
+                publisher = [string]$uninstallProps.Publisher
+            }
+        }
+    }
+
     # VC++ redistributables: aggregate by year+arch keeping the highest version.
     $vcppBest = @{}
-    foreach ($uninst in @('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall')) {
-        $keys = @(Get-ChildItem -LiteralPath $uninst -ErrorAction SilentlyContinue)
-        foreach ($k in $keys) {
-            if ($null -eq $k) { continue }
-            if ($k.PSChildName -notmatch '^\{') { continue }
-            $props = Get-ItemProperty -LiteralPath $k.PSPath -ErrorAction SilentlyContinue
-            if ($null -eq $props) { continue }
-            $dn = [string]$props.DisplayName
-            if ([string]::IsNullOrWhiteSpace($dn)) { continue }
-            if ($dn -notmatch '(?i)Microsoft\s+Visual\s+C\+\+') { continue }
-            if ($dn -match '(?i)(debug|additional|minimum)') { continue }
-            if ($dn -notmatch '(?i)redistributable') { continue }
-            $year = $null
-            if ($dn -match '(?i)\bv14\b') { $year = '2015-2022' }
-            elseif ($dn -match '(20\d\d)') { $year = $matches[1] }
-            if ($null -eq $year) { continue }
-            $archX = $null
-            if ($dn -match '(?i)\bx64\b') { $archX = 'x64' }
-            elseif ($dn -match '(?i)\bx86\b') { $archX = 'x86' }
-            if ($null -eq $archX) { continue }
-            $ver = [string]$props.DisplayVersion
-            if ([string]::IsNullOrWhiteSpace($ver) -and $dn -match '(\d+\.\d+\.\d+(?:\.\d+)?)') { $ver = $matches[1] }
-            if ([string]::IsNullOrWhiteSpace($ver)) { continue }
-            $key = ($year + '|' + $archX)
-            $existing = $null
-            if ($vcppBest.ContainsKey($key)) { $existing = $vcppBest[$key] }
-            $newOk = $true
-            if ($null -ne $existing) {
-                try {
-                    if ([version]$ver -le [version]$existing) { $newOk = $false }
-                } catch {
-                    if ($ver -le $existing) { $newOk = $false }
-                }
+    foreach ($entry in $uninstallEntries) {
+        $dn = [string]$entry.name
+        if ($dn -notmatch '(?i)Microsoft\s+Visual\s+C\+\+') { continue }
+        if ($dn -match '(?i)(debug|additional|minimum)') { continue }
+        if ($dn -notmatch '(?i)redistributable') { continue }
+        $year = $null
+        if ($dn -match '(?i)\bv14\b') { $year = '2015-2022' }
+        elseif ($dn -match '(20\d\d)') { $year = $matches[1] }
+        if ($null -eq $year) { continue }
+        $archX = $null
+        if ($dn -match '(?i)\bx64\b') { $archX = 'x64' }
+        elseif ($dn -match '(?i)\bx86\b') { $archX = 'x86' }
+        if ($null -eq $archX) { continue }
+        $ver = [string]$entry.version
+        if ([string]::IsNullOrWhiteSpace($ver) -and $dn -match '(\d+\.\d+\.\d+(?:\.\d+)?)') { $ver = $matches[1] }
+        if ([string]::IsNullOrWhiteSpace($ver)) { continue }
+        $key = ($year + '|' + $archX)
+        $existing = $null
+        if ($vcppBest.ContainsKey($key)) { $existing = $vcppBest[$key] }
+        $newOk = $true
+        if ($null -ne $existing) {
+            try {
+                if ([version]$ver -le [version]$existing) { $newOk = $false }
+            } catch {
+                if ($ver -le $existing) { $newOk = $false }
             }
-            if ($newOk) { $vcppBest[$key] = $ver }
         }
+        if ($newOk) { $vcppBest[$key] = $ver }
     }
     $vcppOut = @()
     foreach ($key in ($vcppBest.Keys | Sort-Object)) {
@@ -1779,6 +1938,269 @@ try {
         }
     }
     $runtime.wsl = $wslFacts
+
+    # ---- installed software (databases / containers / web servers / languages / dev tools / common) ----
+    # Everything below filters data collected ONCE: the uninstall registry list from above,
+    # one Get-Process snapshot and the service-key name list. Version probes are native
+    # commands with a hard timeout (Invoke-CommandText) and are skipped near the 8s budget.
+    $script:SoftwareItems = @()
+    $script:SoftwareSeen = @{}
+    $processNamesLower = @()
+    try {
+        $processList = @(Get-Process -ErrorAction SilentlyContinue)
+        foreach ($procItem in $processList) {
+            if ($null -eq $procItem) { continue }
+            $processNamesLower += ([string]$procItem.ProcessName).ToLowerInvariant()
+        }
+    } catch { }
+    $serviceNamesLower = @()
+    try {
+        # .NET registry API is much faster than the PowerShell provider for ~900 subkeys.
+        $servicesKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Services')
+        if ($null -ne $servicesKey) {
+            foreach ($serviceKeyName in $servicesKey.GetSubKeyNames()) { $serviceNamesLower += ([string]$serviceKeyName).ToLowerInvariant() }
+            $servicesKey.Close()
+        }
+    } catch { }
+    # .NET SDK list (cheap) also feeds the "language" category.
+    $dotnetSdkList = @()
+    if ($null -ne $dotnetCmd) {
+        $sdkOut = (& dotnet.exe --list-sdks 2>$null | Out-String)
+        foreach ($sdkLine in ($sdkOut -split "`r?`n")) {
+            if ($sdkLine -match '^\s*(\d+\.\d+\.\d+\S*)\s+\[') { $dotnetSdkList += $matches[1] }
+        }
+    }
+    # Visual Studio: vswhere (shipped with the VS installer) is the most reliable source.
+    $vsInstallPath = $null
+    $vsInstallVersion = $null
+    $vswherePath = 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
+    if (Test-Path -LiteralPath $vswherePath) {
+        $vswhereJson = Invoke-CommandText -FilePath $vswherePath -Arguments @('-latest', '-format', 'json', '-utf8') -TimeoutMs 1500
+        if ($vswhereJson) {
+            try {
+                $vswhereJson = $vswhereJson.TrimStart([char]0xFEFF)
+                $vsFacts = @($vswhereJson | ConvertFrom-Json)
+                if ($vsFacts.Count -gt 0) {
+                    $vsInstallVersion = Clean-Text ([string]$vsFacts[0].installationVersion)
+                    $vsInstallPath = Clean-Text ([string]$vsFacts[0].installationPath)
+                }
+            } catch { }
+        }
+    }
+    if ($null -eq $vsInstallVersion) {
+        foreach ($entry in $uninstallEntries) {
+            if ([string]$entry.name -match '(?i)^Visual Studio (Community|Professional|Enterprise) (\d{4})') {
+                $vsInstallVersion = [string]$entry.version
+                $vsInstallPath = $entry.location
+                break
+            }
+        }
+    }
+    $softwareRules = @(
+        @{ name = 'MySQL'; category = 'database'; reg = '(?i)^MySQL Server'; svc = '^mysql'; proc = '^mysqld'; exe = @('mysqld.exe'); port = '3306'; vargs = @('--version'); vregex = '(?i)Ver\s+(\d+\.\d+\.\d+)'; versionInName = $true },
+        @{ name = 'MariaDB'; category = 'database'; reg = '(?i)MariaDB'; svc = '^mariadb'; proc = '^mariadbd'; exe = @('mariadbd.exe', 'mysqld.exe'); port = '3306'; vargs = @('--version'); vregex = '(?i)Ver\s+(\d+\.\d+\.\d+)'; versionInName = $true },
+        @{ name = 'PostgreSQL'; category = 'database'; reg = '(?i)PostgreSQL'; svc = '^postgresql'; proc = '^postgres'; exe = @('psql.exe'); port = '5432' },
+        @{ name = 'Redis'; category = 'database'; reg = '(?i)^Redis'; svc = '^redis'; proc = '^redis-server'; exe = @('redis-server.exe'); port = '6379' },
+        @{ name = 'MongoDB'; category = 'database'; reg = '(?i)^MongoDB'; svc = '^mongodb'; proc = '^mongod'; exe = @('mongod.exe'); port = '27017' },
+        @{ name = 'SQL Server'; category = 'database'; reg = '(?i)^Microsoft SQL Server'; svc = '^mssql'; proc = '^sqlservr'; exe = @('sqlservr.exe'); port = '1433'; svcInstance = $true },
+        @{ name = 'SQLite'; category = 'database'; exe = @('sqlite3.exe'); vargs = @('--version'); vregex = '(\d+\.\d+\.\d+)' },
+        @{ name = 'Docker Desktop'; category = 'container'; reg = '(?i)^Docker Desktop'; svc = '^com\.docker'; proc = '(?i)docker desktop|com\.docker\.backend'; exe = @('docker.exe'); detailKind = 'docker' },
+        @{ name = 'Podman'; category = 'container'; reg = '(?i)Podman'; exe = @('podman.exe'); vargs = @('--version'); vregex = '(\d+\.\d+\.\d+)' },
+        @{ name = 'VirtualBox'; category = 'container'; reg = '(?i)Oracle VM VirtualBox'; svc = '^vboxservice'; proc = '^vbox'; exe = @('VBoxManage.exe'); vargs = @('--version'); vregex = '(\d+\.\d+\.\d+)' },
+        @{ name = 'VMware Workstation'; category = 'container'; reg = '(?i)VMware (Workstation|Player)'; svc = '^vmware'; proc = '^vmware'; exe = @('vmware.exe') },
+        @{ name = 'nginx'; category = 'webServer'; exe = @('nginx.exe'); dirs = @('C:\nginx'); proc = '^nginx'; vargs = @('-v'); vregex = 'nginx/(\d+\.\d+\.\d+)' },
+        @{ name = 'Apache'; category = 'webServer'; reg = '(?i)Apache (HTTP|2\.4)'; exe = @('httpd.exe'); dirs = @('C:\Apache24', 'C:\xampp\apache', 'C:\xampp\apache\bin'); proc = '^httpd'; vargs = @('-v'); vregex = 'Apache/(\d+\.\d+\.\d+)' },
+        @{ name = 'PHP'; category = 'language'; exe = @('php.exe'); vargs = @('-v'); vregex = '(?i)PHP (\d+\.\d+\.\d+)' },
+        @{ name = 'Go'; category = 'language'; exe = @('go.exe'); vargs = @('version'); vregex = 'go(\d+\.\d+(?:\.\d+)?)' },
+        @{ name = 'Rust'; category = 'language'; exe = @('rustc.exe'); vargs = @('--version'); vregex = 'rustc (\d+\.\d+\.\d+)' },
+        @{ name = 'Ruby'; category = 'language'; exe = @('ruby.exe'); vargs = @('-v'); vregex = 'ruby (\d+\.\d+\.\d+)' },
+        @{ name = 'Perl'; category = 'language'; exe = @('perl.exe'); vargs = @('-v'); vregex = '(?i)v(\d+\.\d+\.\d+)' },
+        @{ name = 'GCC (MinGW)'; category = 'language'; exe = @('gcc.exe'); vargs = @('--version'); vregex = '(\d+\.\d+\.\d+)' },
+        @{ name = 'Maven'; category = 'devTool'; exe = @('mvn.cmd', 'mvn.bat'); versionFromPath = '(?i)maven[-_]?(\d+\.\d+\.\d+)'; dirs = @('C:\Program Files\apache-maven') },
+        @{ name = 'Gradle'; category = 'devTool'; exe = @('gradle.bat', 'gradle.cmd'); versionFromPath = '(?i)gradle[-_]?(\d+\.\d+(?:\.\d+)?)'; dirs = @('C:\Gradle') },
+        @{ name = 'VS Code'; category = 'devTool'; reg = '(?i)Microsoft Visual Studio Code'; exe = @('code.cmd', 'code.exe'); proc = '^code$'; dirs = @('D:\Microsoft VS Code', 'C:\Program Files\Microsoft VS Code') },
+        @{ name = 'Navicat'; category = 'devTool'; reg = '(?i)Navicat' },
+        @{ name = 'DBeaver'; category = 'devTool'; reg = '(?i)DBeaver' },
+        @{ name = 'Steam'; category = 'common'; reg = '(?i)^Steam$'; dirs = @('C:\Program Files (x86)\Steam') },
+        @{ name = 'WPS Office'; category = 'common'; reg = '(?i)^WPS Office' },
+        @{ name = 'QQ'; category = 'common'; reg = '(?i)^QQ$' },
+        @{ name = 'PotPlayer'; category = 'common'; reg = '(?i)PotPlayer' },
+        @{ name = 'OBS Studio'; category = 'common'; reg = '(?i)^OBS Studio' },
+        @{ name = 'WeChat'; category = 'common'; reg = '(?i)WeChat|\u5FAE\u4FE1'; displayTextKey = 'wechat' },
+        @{ name = 'NetEase CloudMusic'; category = 'common'; reg = '(?i)CloudMusic|\u7F51\u6613\u4E91\u97F3\u4E50'; displayTextKey = 'netease' }
+    )
+    $uninstallNoise = '(?i)(update|component|helper|telemetry|localization|redistributable|language pack|click-to-run)'
+    foreach ($rule in $softwareRules) {
+        $regHit = $null
+        if ($rule.ContainsKey('reg')) {
+            foreach ($entry in $uninstallEntries) {
+                if ($null -eq $entry) { continue }
+                $entryName = [string]$entry.name
+                if ($entryName -notmatch $rule.reg) { continue }
+                if ($entryName -match $uninstallNoise) { continue }
+                $regHit = $entry
+                break
+            }
+        }
+        $exePath = $null
+        if ($rule.ContainsKey('exe')) {
+            $extraDirs = @()
+            if ($rule.ContainsKey('dirs')) { $extraDirs = $rule.dirs }
+            $exePath = Find-FirstCommandPath -Names $rule.exe -ExtraDirs $extraDirs
+        }
+        $svcHit = $null
+        if ($rule.ContainsKey('svc')) {
+            foreach ($svcNameLower in $serviceNamesLower) {
+                if ($svcNameLower -match $rule.svc) { $svcHit = $svcNameLower; break }
+            }
+        }
+        $procRunning = $null
+        if ($rule.ContainsKey('proc')) {
+            foreach ($procNameLower in $processNamesLower) {
+                if ($procNameLower -match $rule.proc) { $procRunning = $true; break }
+            }
+        }
+        if ($null -eq $regHit -and $null -eq $exePath -and $null -eq $svcHit -and $procRunning -ne $true) { continue }
+        $version = $null
+        if ($null -ne $regHit) { $version = $regHit.version }
+        if ($null -eq $version -and $null -ne $exePath -and $rule.ContainsKey('vargs')) {
+            $probeText = Invoke-CommandText -FilePath $exePath -Arguments $rule.vargs -TimeoutMs 1200
+            if ($probeText -and $probeText -match $rule.vregex) { $version = $matches[1] }
+        }
+        if ($null -eq $version -and $null -ne $exePath -and $rule.ContainsKey('versionFromPath')) {
+            if ($exePath -match $rule.versionFromPath) { $version = $matches[1] }
+        }
+        $itemPath = $null
+        if ($null -ne $exePath) { $itemPath = $exePath }
+        elseif ($null -ne $regHit -and $null -ne $regHit.location) { $itemPath = $regHit.location }
+        $running = $null
+        # running: the process snapshot is free; a matched service without its process = stopped.
+        if ($procRunning -eq $true) { $running = $true }
+        elseif ($null -ne $svcHit) { $running = $false }
+        $displayName = [string]$rule.name
+        if ($rule.ContainsKey('displayTextKey')) {
+            $mappedName = [string]$script:T.software.names.($rule.displayTextKey)
+            if (-not [string]::IsNullOrWhiteSpace($mappedName)) { $displayName = $mappedName }
+        }
+        if ($rule.ContainsKey('versionInName') -and $null -ne $version) {
+            if ($version -match '^(\d+)\.(\d+)') { $displayName = ($displayName + ' ' + $matches[1] + '.' + $matches[2]) }
+        }
+        $detail = $null
+        if ($rule.ContainsKey('svcInstance') -and $null -ne $svcHit) {
+            $detail = ($script:T.software.details.instance -f $svcHit.ToUpperInvariant())
+        } elseif ($rule.ContainsKey('port')) {
+            $detail = ($script:T.software.details.port -f [string]$rule.port)
+        }
+        $source = 'registry'
+        if ($null -eq $regHit) {
+            if ($null -ne $exePath) { $source = 'path' }
+            elseif ($null -ne $svcHit) { $source = 'service' }
+        }
+        Register-Software -Name $displayName -Version $version -Path $itemPath -Category $rule.category -Source $source -Running $running -Detail $detail
+    }
+
+    # SQLite: Windows ships winsqlite3.dll even when no sqlite3.exe is on PATH.
+    if (-not $script:SoftwareSeen.ContainsKey('sqlite')) {
+        $winsqlitePath = Join-Path $env:SystemRoot 'System32\winsqlite3.dll'
+        if (Test-Path -LiteralPath $winsqlitePath) {
+            Register-Software -Name 'SQLite' -Version $null -Path $winsqlitePath -Category 'database' -Source 'dir' -Running $null -Detail ([string]$script:T.software.details.sqliteDll)
+        }
+    }
+    # IIS is identified by its W3SVC service.
+    if (-not $script:SoftwareSeen.ContainsKey('iis')) {
+        $iisServiceName = $null
+        foreach ($svcNameLower in $serviceNamesLower) {
+            if ($svcNameLower -eq 'w3svc') { $iisServiceName = 'W3SVC'; break }
+        }
+        if ($null -ne $iisServiceName) {
+            $iisRunning = $false
+            foreach ($procNameLower in $processNamesLower) {
+                if ($procNameLower -eq 'w3wp') { $iisRunning = $true; break }
+            }
+            Register-Software -Name 'IIS' -Version $null -Path (Join-Path $env:SystemRoot 'System32\inetsrv') -Category 'webServer' -Source 'service' -Running $iisRunning -Detail 'W3SVC'
+        }
+    }
+    # .NET SDK (one item, highest SDK version, detail lists every installed SDK).
+    if ($dotnetSdkList.Count -gt 0) {
+        $bestSdk = Get-HighestVersionString -Versions $dotnetSdkList
+        $sdkListText = (($dotnetSdkList | Sort-Object) -join ', ')
+        $sdkDetail = ($script:T.software.details.sdkCount -f [string]$dotnetSdkList.Count, $sdkListText)
+        Register-Software -Name '.NET SDK' -Version $bestSdk -Path 'C:\Program Files\dotnet' -Category 'language' -Source 'command' -Running $null -Detail $sdkDetail
+    }
+    # Visual Studio (devTool) + MSBuild (language, comes with VS).
+    if ($null -ne $vsInstallVersion) {
+        $vsName = 'Visual Studio'
+        if ($vsInstallVersion -match '^(\d+)\.') {
+            $vsMajor = [int]$matches[1]
+            if ($vsMajor -ge 17) { $vsName = 'Visual Studio 2022' }
+            elseif ($vsMajor -eq 16) { $vsName = 'Visual Studio 2019' }
+            elseif ($vsMajor -eq 15) { $vsName = 'Visual Studio 2017' }
+            elseif ($vsMajor -eq 14) { $vsName = 'Visual Studio 2015' }
+        }
+        Register-Software -Name $vsName -Version $vsInstallVersion -Path $vsInstallPath -Category 'devTool' -Source 'command' -Running $null -Detail $null -Key 'visualstudio'
+        if ($null -ne $vsInstallPath) {
+            $msbuildPath = Join-Path $vsInstallPath 'MSBuild\Current\Bin\MSBuild.exe'
+            if (Test-Path -LiteralPath $msbuildPath) {
+                $msbuildVersion = $null
+                try {
+                    $msbuildInfo = (Get-Item -LiteralPath $msbuildPath).VersionInfo
+                    $msbuildVersion = Clean-Text ([string]$msbuildInfo.FileVersion)
+                    if ($null -eq $msbuildVersion) {
+                        $msbuildVersion = Clean-Text ([string]$msbuildInfo.ProductVersion)
+                        if ($null -ne $msbuildVersion) { $msbuildVersion = ($msbuildVersion -replace '\+.*$', '') }
+                    }
+                } catch { }
+                Register-Software -Name 'MSBuild' -Version $msbuildVersion -Path $msbuildPath -Category 'language' -Source 'dir' -Running $null -Detail ([string]$script:T.software.details.withVisualStudio)
+            }
+        }
+    }
+    # JetBrains IDEs: one entry per installed IDE found in the uninstall list.
+    $jetbrainsProducts = @('IntelliJ IDEA', 'PyCharm', 'WebStorm', 'CLion', 'GoLand', 'Rider', 'PhpStorm', 'DataGrip', 'RubyMine', 'DataSpell', 'RustRover', 'ReSharper')
+    foreach ($entry in $uninstallEntries) {
+        $entryName = [string]$entry.name
+        if ($entryName -notmatch '(?i)JetBrains') { continue }
+        foreach ($product in $jetbrainsProducts) {
+            if ($entryName -notmatch [regex]::Escape($product)) { continue }
+            Register-Software -Name $product -Version $entry.version -Path $entry.location -Category 'devTool' -Source 'registry' -Running $null -Detail $null -Key ('jetbrains-' + $product.ToLowerInvariant())
+            break
+        }
+    }
+    # Microsoft Office (ignore Click-to-Run component / localization / licensing entries).
+    foreach ($entry in $uninstallEntries) {
+        $entryName = [string]$entry.name
+        if ($entryName -notmatch '(?i)^Microsoft (Office|365)') { continue }
+        if ($entryName -match $uninstallNoise) { continue }
+        Register-Software -Name 'Microsoft Office' -Version $entry.version -Path $entry.location -Category 'common' -Source 'registry' -Running $null -Detail $null
+        break
+    }
+    # Docker Desktop: detail should show the engine version when the daemon answers.
+    if ($script:SoftwareSeen.ContainsKey('docker desktop')) {
+        $dockerItem = $script:SoftwareSeen['docker desktop']
+        $dockerExePath = $null
+        if ($null -ne $dockerItem.path -and ([string]$dockerItem.path) -match '(?i)docker\.exe$') { $dockerExePath = [string]$dockerItem.path }
+        if ($null -eq $dockerExePath) { $dockerExePath = Find-FirstCommandPath -Names @('docker.exe') }
+        if ($null -ne $dockerExePath) {
+            $engineVersion = $null
+            # Only ask the daemon for its engine version when Docker is actually running;
+            # otherwise "docker version" just wastes a second on a pipe error.
+            if ($dockerItem.running -eq $true) {
+                $engineText = Invoke-CommandText -FilePath $dockerExePath -Arguments @('version', '--format', '{{.Server.Version}}') -TimeoutMs 1200
+                if ($engineText -and $engineText -match '(\d+\.\d+\.\d+)') { $engineVersion = $matches[1] }
+            }
+            if ($null -ne $engineVersion) {
+                $dockerItem.detail = ($script:T.software.details.engine -f $engineVersion)
+            } else {
+                $clientText = Invoke-CommandText -FilePath $dockerExePath -Arguments @('--version') -TimeoutMs 1200
+                if ($clientText -and $clientText -match '(\d+\.\d+\.\d+)') {
+                    $dockerItem.detail = ($script:T.software.details.client -f $matches[1])
+                }
+            }
+        }
+    }
+    $softwareCategoryOrder = @{ database = 0; container = 1; webServer = 2; language = 3; devTool = 4; common = 5 }
+    $softwareSorted = @($script:SoftwareItems | Sort-Object -Property @{ Expression = { $softwareCategoryOrder[[string]$_.category] } }, @{ Expression = { [string]$_.name } })
+    $runtime.software = $softwareSorted
+
     $runtime.powershellVersion = [string]$PSVersionTable.PSVersion.ToString()
 } catch {
     Add-SectionFailure 'runtime' $_.Exception.Message
@@ -2148,6 +2570,78 @@ try {
         }
     } else {
         $compatItems += [ordered]@{ id = 'c.os.version'; name = [string]$C.osVersion.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$C.osVersion.requirement; reason = [string]$C.osVersion.unknownReason; detail = $null }
+    }
+    # 16) GPU driver installed and WDDM >= 2.0 (prefer the discrete GPU when there are several)
+    $primaryGpu = $null
+    foreach ($gpuItem in $gpus) {
+        if ($null -ne $gpuItem -and $gpuItem.discrete -eq $true) { $primaryGpu = $gpuItem; break }
+    }
+    if ($null -eq $primaryGpu -and $gpus.Count -gt 0) { $primaryGpu = $gpus[0] }
+    $gpuDriverInfo = $C.gpuDriver
+    $gpuAgeInfo = $C.gpuDriverAge
+    $driverDateText = $null
+    $driverAgeMonths = $null
+    if ($null -ne $primaryGpu) {
+        if ($null -ne $primaryGpu.driverDate -and ([string]$primaryGpu.driverDate) -match '^(\d{4}-\d{2}-\d{2})') {
+            $driverDateText = $matches[1]
+            try {
+                $driverDateValue = [datetime]::Parse($driverDateText, [System.Globalization.CultureInfo]::InvariantCulture)
+                $driverAgeMonths = [int][Math]::Floor(((Get-Date) - $driverDateValue).TotalDays / 30.44)
+                if ($driverAgeMonths -lt 0) { $driverAgeMonths = 0 }
+            } catch { }
+        }
+        $driverVersionText = [string]$primaryGpu.driverVersion
+        $gpuVendorText = [string]$primaryGpu.vendor
+        if ([string]::IsNullOrWhiteSpace($gpuVendorText)) { $gpuVendorText = [string]$primaryGpu.name }
+        $driverActual = $null
+        if (-not [string]::IsNullOrWhiteSpace($driverVersionText)) {
+            $driverActual = ($gpuVendorText + ' ' + $driverVersionText).Trim()
+            if ($null -ne $driverDateText) { $driverActual = $driverActual + ' / ' + $driverDateText }
+        }
+        # WDDM: use the real version when readable, otherwise infer from the DX12 feature level.
+        $wddmKnownText = [string]$runtime.directx.wddm
+        $wddmOk = $false
+        $wddmInferred = $false
+        if (-not [string]::IsNullOrWhiteSpace($wddmKnownText)) {
+            if ($wddmKnownText -match '^(\d+)\.') {
+                if ([int]$matches[1] -ge 2) { $wddmOk = $true }
+            }
+        } elseif ($null -ne $runtime.directx.featureLevel -and $null -ne $runtime.directx.major -and [int]$runtime.directx.major -ge 12) {
+            $wddmOk = $true
+            $wddmInferred = $true
+        }
+        $gpuStatusText = [string]$primaryGpu.status
+        if ([string]::IsNullOrWhiteSpace($driverVersionText)) {
+            if (-not [string]::IsNullOrWhiteSpace($gpuStatusText) -and $gpuStatusText -ne 'OK') {
+                $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'fail'; actual = $gpuStatusText; requirement = [string]$gpuDriverInfo.requirement; reason = [string]$gpuDriverInfo.failReason; detail = [string]$gpuDriverInfo.failDetail }
+            } else {
+                $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$gpuDriverInfo.requirement; reason = [string]$gpuDriverInfo.unknownReason; detail = $null }
+            }
+        } elseif (-not [string]::IsNullOrWhiteSpace($gpuStatusText) -and $gpuStatusText -ne 'OK') {
+            $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'fail'; actual = $driverActual; requirement = [string]$gpuDriverInfo.requirement; reason = [string]$gpuDriverInfo.failReason; detail = [string]$gpuDriverInfo.failDetail }
+        } elseif ($wddmOk) {
+            $driverDetail = [string]$gpuDriverInfo.passDetail
+            if ($wddmInferred) { $driverDetail = $driverDetail + [string]$gpuDriverInfo.wddmInferred }
+            $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'pass'; actual = $driverActual; requirement = [string]$gpuDriverInfo.requirement; reason = $null; detail = $driverDetail }
+        } else {
+            $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'unknown'; actual = $driverActual; requirement = [string]$gpuDriverInfo.requirement; reason = [string]$gpuDriverInfo.unknownReason; detail = $null }
+        }
+        # 17) GPU driver age: older than 18 months => warn
+        if ($null -eq $driverDateText) {
+            $compatItems += [ordered]@{ id = 'gpu.driverAge'; name = [string]$gpuAgeInfo.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$gpuAgeInfo.requirement; reason = [string]$gpuAgeInfo.unknownReason; detail = $null }
+        } elseif ($null -ne $driverAgeMonths) {
+            $ageActual = ($script:T.fmt.driverDateMonths -f $driverDateText, [string]$driverAgeMonths)
+            if ($driverAgeMonths -gt 18) {
+                $compatItems += [ordered]@{ id = 'gpu.driverAge'; name = [string]$gpuAgeInfo.name; status = 'warn'; actual = $ageActual; requirement = [string]$gpuAgeInfo.requirement; reason = ($gpuAgeInfo.warnReason -f [string]$driverAgeMonths); detail = [string]$gpuAgeInfo.warnDetail }
+            } else {
+                $compatItems += [ordered]@{ id = 'gpu.driverAge'; name = [string]$gpuAgeInfo.name; status = 'pass'; actual = $ageActual; requirement = [string]$gpuAgeInfo.requirement; reason = $null; detail = [string]$gpuAgeInfo.passDetail }
+            }
+        } else {
+            $compatItems += [ordered]@{ id = 'gpu.driverAge'; name = [string]$gpuAgeInfo.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$gpuAgeInfo.requirement; reason = [string]$gpuAgeInfo.unknownReason; detail = $null }
+        }
+    } else {
+        $compatItems += [ordered]@{ id = 'gpu.driver'; name = [string]$gpuDriverInfo.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$gpuDriverInfo.requirement; reason = [string]$gpuDriverInfo.unknownReason; detail = $null }
+        $compatItems += [ordered]@{ id = 'gpu.driverAge'; name = [string]$gpuAgeInfo.name; status = 'unknown'; actual = [string]$script:T.fmt.noData; requirement = [string]$gpuAgeInfo.requirement; reason = [string]$gpuAgeInfo.unknownReason; detail = $null }
     }
 } catch {
     Add-SectionFailure 'compat' $_.Exception.Message

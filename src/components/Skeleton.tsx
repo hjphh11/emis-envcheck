@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import { avatarUrl } from "./ui/emis";
 
 const COPY_LINES = [
+  "正在读取你的电脑…",
   "正在读取主板信息…",
   "正在核对运行环境…",
   "正在读取显卡与显示器…",
   "正在检查硬盘健康度…",
   "正在比对升级兼容性…",
-  "正在整理体检报告…",
 ];
 
 function Line({ w, mt }: { w: string; mt?: number }) {
@@ -34,9 +35,18 @@ export function Skeleton() {
 
   return (
     <div className="skel-shell" aria-busy="true" aria-live="polite">
-      <div className="skel-copy skel-swap" key={line}>
-        <span className="skel-copy__dot" aria-hidden="true" />
-        {COPY_LINES[line]}
+      <div className="skel-intro">
+        <img
+          className="skel-intro__avatar"
+          src={avatarUrl}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
+        <div className="skel-copy skel-swap" key={line}>
+          <span className="skel-copy__dot" aria-hidden="true" />
+          {COPY_LINES[line]}
+        </div>
       </div>
 
       <div className="score-row">

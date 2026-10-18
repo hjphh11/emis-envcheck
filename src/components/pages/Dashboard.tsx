@@ -27,6 +27,7 @@ import {
 } from "../../lib/format";
 import { GlassCard } from "../ui/GlassCard";
 import { Gauge } from "../ui/Gauge";
+import { portraitUrl } from "../ui/emis";
 import { InfoGrid, InfoRow } from "../ui/InfoRow";
 import { ProgressBar } from "../ui/ProgressBar";
 import { StatusDot } from "../ui/StatusDot";
@@ -136,11 +137,20 @@ export function Dashboard({ scan, notify }: DashboardProps) {
             <span className="score-card__level-text">{level.label}</span>
           </div>
           <p className="score-card__hand">{level.hand}</p>
-          <div className="score-card__meta">
-            采集耗时 {(scan.meta.scanMs / 1000).toFixed(1)} 秒 ·{" "}
-            {fmtDateTime(scan.meta.generatedAt)}
-            <br />
-            {scan.meta.isAdmin ? "管理员权限 · 明细完整" : "普通权限 · 部分明细不可用"}
+          <div className="score-card__foot">
+            <div className="score-card__meta">
+              采集耗时 {(scan.meta.scanMs / 1000).toFixed(1)} 秒 ·{" "}
+              {fmtDateTime(scan.meta.generatedAt)}
+              <br />
+              {scan.meta.isAdmin ? "管理员权限 · 明细完整" : "普通权限 · 部分明细不可用"}
+            </div>
+            <img
+              className="score-card__portrait"
+              src={portraitUrl}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+            />
           </div>
         </GlassCard>
 
@@ -290,16 +300,25 @@ export function Dashboard({ scan, notify }: DashboardProps) {
             size="lg"
             label="内存使用率"
           />
-          <div className="mem-meta">
-            <span>可用 {fmtBytes(memory.availableBytes)}</span>
-            <span>
-              {memory.dualChannelHint == null
-                ? "通道未知"
-                : memory.dualChannelHint
-                  ? "双通道"
-                  : "单通道"}
-            </span>
-            <span>{memory.modules.length} 条内存</span>
+          <div className="mem-stats">
+            <div className="mem-stat">
+              <span className="mem-stat__k">总容量</span>
+              <span className="mem-stat__v">{fmtBytes(memory.totalBytes)}</span>
+            </div>
+            <div className="mem-stat">
+              <span className="mem-stat__k">可用</span>
+              <span className="mem-stat__v">{fmtBytes(memory.availableBytes)}</span>
+            </div>
+            <div className="mem-stat">
+              <span className="mem-stat__k">通道</span>
+              <span className="mem-stat__v">
+                {memory.dualChannelHint == null
+                  ? "未知"
+                  : memory.dualChannelHint
+                    ? "双通道"
+                    : "单通道"}
+              </span>
+            </div>
           </div>
           {memory.modules.length === 0 ? (
             <Empty>未检测到内存条明细。</Empty>
@@ -479,28 +498,30 @@ export function Dashboard({ scan, notify }: DashboardProps) {
         </GlassCard>
 
         <GlassCard index={7} title="网络" icon={Network}>
-          <InfoGrid>
-            <InfoRow
-              k="联网"
-              v={
-                network.internet == null
-                  ? "未知"
-                  : network.internet
-                    ? "已连接互联网"
-                    : "未连接互联网"
-              }
-              tone={network.internet === true ? "ok" : network.internet === false ? "warn" : "default"}
-            />
-            <InfoRow
-              k="延迟"
-              v={network.latencyMs != null ? `${network.latencyMs} ms` : "未知"}
-            />
-            <InfoRow
-              k="DNS"
-              v={network.dnsOk == null ? "未知" : network.dnsOk ? "解析正常" : "解析异常"}
-              tone={network.dnsOk === false ? "warn" : "default"}
-            />
-          </InfoGrid>
+          <div className="net-status">
+            <span className="net-status__item">
+              <StatusDot
+                status={
+                  network.internet == null
+                    ? "unknown"
+                    : network.internet
+                      ? "pass"
+                      : "warn"
+                }
+              />
+              {network.internet == null
+                ? "联网未知"
+                : network.internet
+                  ? "已联网"
+                  : "未联网"}
+            </span>
+            <span className="net-status__item">
+              延迟 {network.latencyMs != null ? `${network.latencyMs} ms` : "未知"}
+            </span>
+            <span className="net-status__item">
+              DNS {network.dnsOk == null ? "未知" : network.dnsOk ? "正常" : "异常"}
+            </span>
+          </div>
           {(network.adapters ?? []).length === 0 ? (
             <Empty>未检测到网络适配器。</Empty>
           ) : (
@@ -552,20 +573,34 @@ export function Dashboard({ scan, notify }: DashboardProps) {
       {/* 配置码 */}
       <GlassCard index={8} title="配置码" icon={Terminal} className="config-card">
         <div className="config-line">
-          <div className="config-code" title={configCode}>
+          <div
+            className="config-code"
+            title={`${configCode}\n\n聚焦后按 Ctrl+C 可复制`}
+            tabIndex={0}
+            role="textbox"
+            aria-readonly="true"
+            aria-label="配置码，聚焦后按 Ctrl+C 复制"
+            onKeyDown={(e) => {
+              const noSelection = !window.getSelection()?.toString();
+              if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c" && noSelection) {
+                e.preventDefault();
+                void copyConfig();
+              }
+            }}
+          >
             {configCode}
           </div>
           <Button
             variant="ghost"
             icon={copied ? Check : Copy}
             onClick={() => void copyConfig()}
-            title="复制这一行配置信息"
+            title="复制这一行配置信息 (聚焦配置码后 Ctrl+C)"
           >
             {copied ? "已复制" : "复制"}
           </Button>
         </div>
         <p className="tiny" style={{ marginTop: 10 }}>
-          把这一行发给别人，就能一眼看清整机配置
+          把这一行发给别人，就能一眼看清整机配置 · 聚焦配置码后按 Ctrl+C 也能复制
           <Sparkles
             size={12}
             strokeWidth={2}

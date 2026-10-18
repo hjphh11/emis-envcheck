@@ -35,13 +35,13 @@ export function ToastHost({ toast, onClose }: ToastHostProps) {
             ]
               .filter(Boolean)
               .join(" ")}
-            initial={reduced ? false : { opacity: 0, y: 12, scale: 0.98 }}
+            initial={reduced ? false : { opacity: 0, y: 14, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.98 }}
             transition={
               reduced
                 ? { duration: 0 }
-                : { duration: 0.24, ease: [0.16, 1, 0.3, 1] }
+                : { type: "spring", stiffness: 460, damping: 30, mass: 0.7 }
             }
           >
             <span className="toast__icon" aria-hidden="true">

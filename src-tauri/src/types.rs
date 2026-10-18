@@ -526,6 +526,32 @@ pub struct WslInfo {
     pub distros: Vec<String>,
 }
 
+/// —— 8.1 已安装的第三方软件（数据库 / 容器 / Web 服务 / 语言 / 开发工具 / 常见软件） ——
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct SoftwareItem {
+    /// 展示名，如 "MySQL" / "Redis 3.0.504" / "Docker Desktop"
+    #[serde(deserialize_with = "de_string")]
+    pub name: String,
+    #[serde(deserialize_with = "de_opt_string")]
+    pub version: Option<String>,
+    /// 安装目录或可执行文件路径
+    #[serde(deserialize_with = "de_opt_string")]
+    pub path: Option<String>,
+    /// "database" / "container" / "webServer" / "language" / "devTool" / "common"
+    #[serde(deserialize_with = "de_string")]
+    pub category: String,
+    /// "registry" / "service" / "path" / "command" / "dir"
+    #[serde(deserialize_with = "de_opt_string")]
+    pub source: Option<String>,
+    /// 后台服务 / 进程是否正在运行；非服务类软件为 null
+    #[serde(deserialize_with = "de_opt_bool")]
+    pub running: Option<bool>,
+    /// 附加信息，如端口 "3306"、数据目录、"引擎 27.3.1"
+    #[serde(deserialize_with = "de_opt_string")]
+    pub detail: Option<String>,
+}
+
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct RuntimeInfo {
@@ -551,6 +577,10 @@ pub struct RuntimeInfo {
     pub wsl: WslInfo,
     #[serde(deserialize_with = "de_opt_string")]
     pub powershell_version: Option<String>,
+    /// 已安装的第三方软件（v1.1 新增）。
+    /// 老版本采集器不会输出该字段：缺失 / null 都按空数组兜底，前端会自动隐藏该分区。
+    #[serde(deserialize_with = "de_vec")]
+    pub software: Vec<SoftwareItem>,
 }
 
 // ============================================================

@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from "react";
-import { useCountUp } from "../../lib/hooks";
+import { animate, useReducedMotion } from "motion/react";
 import { clampPct } from "../../lib/format";
 
 export interface GaugeProps {
@@ -13,23 +13,36 @@ export interface GaugeProps {
 
 /**
  * 0–100 评分环：SVG stroke-dasharray + 数字滚动。
- * 首次挂载时环从 0 长到目标值；降低动效时直接显示终值。
+ * 环和数字由同一条弹簧曲线驱动（0 → 目标值，约 0.9s），读起来是「分数长出来」而不是数字跳一下。
+ * 降低动效时直接显示终值。
  */
 export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugeProps) {
   const raw = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const gradientId = `gauge-grad-${raw}`;
-  const [ready, setReady] = useState(false);
+  const reduced = useReducedMotion();
   const target = clampPct(value);
-  const shown = useCountUp(target);
+  const [shown, setShown] = useState(reduced ? target : 0);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(() => setReady(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
+    if (reduced) {
+      setShown(target);
+      return;
+    }
+    const controls = animate(0, target, {
+      type: "spring",
+      stiffness: 62,
+      damping: 13,
+      mass: 0.9,
+      restDelta: 0.2,
+      onUpdate: (v) => setShown(v),
+    });
+    return () => controls.stop();
+  }, [target, reduced]);
 
+  const display = clampPct(shown);
   const r = 84;
   const c = 2 * Math.PI * r;
-  const offset = c * (1 - (ready ? target : 0) / 100);
+  const offset = c * (1 - display / 100);
 
   return (
     <div className="gauge">
@@ -66,9 +79,8 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
           }}
           strokeWidth={thickness}
         />
-        {/* 进度 */}
+        {/* 进度（由弹簧值直接驱动，不再走 CSS transition） */}
         <circle
-          className="gauge__ring"
           cx="100"
           cy="100"
           r={r}
@@ -82,7 +94,7 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
         />
       </svg>
       <div className="gauge__center">
-        <div className="gauge__value">{Math.round(shown)}</div>
+        <div className="gauge__value">{Math.round(display)}</div>
         <div className="gauge__unit">{unit}</div>
       </div>
     </div>

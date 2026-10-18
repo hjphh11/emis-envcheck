@@ -297,6 +297,31 @@ export interface WslInfo {
   distros: string[];
 }
 
+/** —— 8.1 已安装的第三方软件（数据库 / 容器 / Web 服务 / 语言 / 开发工具） —— */
+export type SoftwareCategory =
+  | "database" // MySQL / MariaDB / PostgreSQL / Redis / MongoDB / SQL Server / SQLite
+  | "container" // Docker / Podman / WSL / VirtualBox / VMware
+  | "webServer" // nginx / Apache / IIS
+  | "language" // PHP / Go / Rust / .NET SDK / MSBuild / Android SDK
+  | "devTool" // VS Code / Visual Studio / JetBrains / Maven / Gradle
+  | "common"; // Steam / Office / 微信 / QQ …（只挑常见的）
+
+export interface SoftwareItem {
+  /** 展示名，如 "MySQL" */
+  name: string;
+  /** 版本号，拿不到 null */
+  version: string | null;
+  /** 安装目录或可执行文件路径，拿不到 null */
+  path: string | null;
+  category: SoftwareCategory;
+  /** 是怎么检测到的，便于排障 */
+  source: "registry" | "service" | "path" | "command" | "dir" | null;
+  /** 后台服务 / 进程是否正在运行；非服务类软件为 null */
+  running: boolean | null;
+  /** 附加信息，如端口 "3306"、数据目录、"引擎 27.3.1" */
+  detail: string | null;
+}
+
 export interface RuntimeInfo {
   dotnetFramework: DotnetFrameworkInfo[];
   dotnetRuntimes: DotnetRuntimeInfo[];
@@ -309,6 +334,8 @@ export interface RuntimeInfo {
   git: ToolInfo | null;
   wsl: WslInfo;
   powershellVersion: string | null;
+  /** 已安装的第三方软件（新增）。没装任何目标软件时为空数组。 */
+  software: SoftwareItem[];
 }
 
 /** —— 9. 安全 —— */

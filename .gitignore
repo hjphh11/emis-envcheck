@@ -34,3 +34,6 @@ npm-debug.log*
 *.sw?
 dev/*scan*.json
 dev/tabs/
+
+# 需要 gh token 的 workflow scope 才能推送（本机 token 没有）
+.github/workflows/build.yml

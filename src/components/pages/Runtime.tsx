@@ -1,5 +1,10 @@
-import { Sparkles } from "lucide-react";
-import type { CheckStatus, ScanResult } from "../../types";
+import { Boxes, Sparkles } from "lucide-react";
+import type {
+  CheckStatus,
+  ScanResult,
+  SoftwareCategory,
+  SoftwareItem,
+} from "../../types";
 import { text } from "../../lib/format";
 import { GlassCard } from "../ui/GlassCard";
 import { StatusDot } from "../ui/StatusDot";
@@ -35,6 +40,40 @@ function versionAtLeast(v: string | null | undefined, min: number[]): boolean {
   return true;
 }
 
+/** 软件分类的展示顺序与中文名 */
+const SOFTWARE_ORDER: SoftwareCategory[] = [
+  "database",
+  "container",
+  "webServer",
+  "language",
+  "devTool",
+  "common",
+];
+
+const SOFTWARE_TITLE: Record<SoftwareCategory, string> = {
+  database: "数据库",
+  container: "容器与虚拟化",
+  webServer: "Web 服务",
+  language: "开发语言",
+  devTool: "开发工具",
+  common: "常用软件",
+};
+
+interface SoftwareGroup {
+  key: SoftwareCategory;
+  title: string;
+  items: SoftwareItem[];
+}
+
+function buildSoftwareGroups(scan: ScanResult): SoftwareGroup[] {
+  const list = scan.runtime.software ?? [];
+  return SOFTWARE_ORDER.map((category) => ({
+    key: category,
+    title: SOFTWARE_TITLE[category],
+    items: list.filter((s) => s.category === category),
+  })).filter((g) => g.items.length > 0);
+}
+
 /** 一句手写体：这台机器适合跑什么 */
 function fitSentence(scan: ScanResult): string {
   const memGB = scan.memory.totalBytes / 1024 ** 3;
@@ -43,11 +82,17 @@ function fitSentence(scan: ScanResult): string {
   const hasFw = rt.dotnetFramework.some((d) => d.installed);
   const hasWebview = rt.webview2.installed === true;
   const hasDev = Boolean(rt.node || rt.python || rt.git);
+  const software = rt.software ?? [];
+  const hasDb = software.some((s) => s.category === "database");
+  const hasContainer = software.some((s) => s.category === "container");
+  const hasWeb = software.some((s) => s.category === "webServer");
 
   const items: string[] = ["日常办公与网页浏览"];
   if (memGB >= 16) items.push("多任务与轻度创作");
   if (hasDev) items.push("本地开发与脚本自动化");
   else if (hasFw || hasWebview) items.push("常见 Windows 桌面软件");
+  if (hasDb || hasContainer) items.push("数据库与容器");
+  else if (hasWeb) items.push("本地 Web 服务");
   if (hasDiscrete && memGB >= 16) items.push("主流 3A 游戏");
   if (hasDiscrete && memGB >= 8) items.push("视频剪辑与 GPU 加速");
 
@@ -213,9 +258,18 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   return groups;
 }
 
+/** 去掉采集器偶尔带上的包裹引号 */
+function cleanPath(v: string | null | undefined): string {
+  if (!v) return "";
+  return v.trim().replace(/^["'“”]+/, "").replace(/["'“”]+$/, "").trim();
+}
+
 export function Runtime({ scan, baseIndex = 0 }: { scan: ScanResult; baseIndex?: number }) {
   const groups = buildGroups(scan);
   const installedCount = groups.filter((g) => g.status === "pass").length;
+  const software = scan.runtime.software ?? [];
+  const softwareGroups = buildSoftwareGroups(scan);
+  const runningCount = software.filter((s) => s.running === true).length;
 
   return (
     <div>
@@ -225,9 +279,97 @@ export function Runtime({ scan, baseIndex = 0 }: { scan: ScanResult; baseIndex?:
         </span>
         <p className="runtime-quote__text">
           {fitSentence(scan)} <strong>{installedCount} / {groups.length}</strong>{" "}
-          项运行环境已就绪。
+          项运行环境已就绪
+          {software.length > 0 ? (
+            <>
+              ，另外找到 <strong>{software.length}</strong> 个常用软件
+              {runningCount > 0 ? `（${runningCount} 个正在运行）` : ""}。
+            </>
+          ) : (
+            "。"
+          )}
         </p>
       </div>
+
+      {/* —— 已安装软件（放前面：这是用户最想看的新内容） —— */}
+      <GlassCard
+        index={baseIndex}
+        title="已安装软件"
+        icon={Boxes}
+        extra={
+          <span className="tiny">
+            {software.length > 0 ? `${software.length} 个` : "未检测到"}
+          </span>
+        }
+        className="software-card"
+      >
+        {software.length === 0 ? (
+          <div className="software-empty">
+            <span className="software-empty__hand">爱弥斯没找到这些软件呢</span>
+            <p className="tiny">没有检测到这类软件</p>
+          </div>
+        ) : (
+          <div className="software-groups">
+            {softwareGroups.map((g) => (
+              <section className="software-group" key={g.key}>
+                <header className="software-group__head">
+                  <span className="software-group__title">{g.title}</span>
+                  <span className="software-group__count">{g.items.length}</span>
+                  {g.items.some((s) => s.running === true) && (
+                    <span className="software-group__live">运行中</span>
+                  )}
+                </header>
+                <div className="software-list">
+                  {g.items.map((item, idx) => (
+                    <div
+                      className="software-row"
+                      key={`${item.name}-${idx}`}
+                      title={item.detail ?? undefined}
+                    >
+                      {item.running == null ? (
+                        <span className="software-row__dot" aria-hidden="true" />
+                      ) : (
+                        <StatusDot status={item.running ? "pass" : "unknown"} />
+                      )}
+                      <span className="software-row__name" title={item.name}>
+                        {text(item.name)}
+                      </span>
+                      {item.version?.trim() ? (
+                        <span
+                          className="software-row__ver"
+                          title={item.version}
+                        >
+                          {item.version}
+                        </span>
+                      ) : (
+                        <span className="software-row__ver software-row__ver--none">
+                          —
+                        </span>
+                      )}
+                      <span
+                        className="software-row__path"
+                        title={cleanPath(item.path) || item.detail?.trim() || undefined}
+                      >
+                        {cleanPath(item.path) || item.detail?.trim() || ""}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        )}
+        <p className="software-foot">
+          绿点＝后台服务/进程正在运行 · 悬停行可看端口、引擎版本等备注
+        </p>
+      </GlassCard>
+
+      <h2 className="runtime-section-head">
+        <span>运行环境</span>
+        <span className="runtime-section-head__count">
+          {installedCount} / {groups.length} 组已就绪
+        </span>
+      </h2>
 
       <div className="env-groups">
         {groups.map((g, i) => (

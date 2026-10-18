@@ -1,5 +1,6 @@
 import { Minus, Square, X } from "lucide-react";
 import { hasBackend } from "../lib/api";
+import { avatarUrl } from "./ui/emis";
 
 /** 只声明用到的窗口能力，避免静态 import Tauri（浏览器预览时不能崩） */
 interface WinApi {
@@ -26,7 +27,13 @@ export function TitleBar({ title = "爱弥斯 · 环境检测" }: { title?: stri
   return (
     <header className="titlebar">
       <div className="titlebar__brand">
-        <span className="logo-mark" aria-hidden="true" />
+        <img
+          className="logo-avatar"
+          src={avatarUrl}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
         <span className="titlebar__title">{title}</span>
       </div>
 

@@ -308,6 +308,10 @@ mod tests {
         assert!(json["meta"].get("generatedAt").is_some());
         assert!(json.get("motherboard").is_some());
         assert!(json["cpu"].get("physicalCores").is_some());
+        assert!(
+            json["runtime"].get("software").is_some(),
+            "runtime.software 必须透传到前端（空数组也要保留字段）"
+        );
         assert!(json.get("compat").is_some());
         assert!(json.get("score").is_some());
     }

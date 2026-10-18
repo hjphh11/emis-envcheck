@@ -79,6 +79,7 @@
     "bitLockerOff": "已关闭",
     "bitLockerUnknown": "无法读取（需要管理员权限）",
     "peVersion": "PE 构架 {0}",
+    "driverDateMonths": "{0}（{1} 个月前）",
     "noData": "无法读取"
   },
   "sections": {
@@ -252,6 +253,47 @@
       "failReason": "系统版本过旧，无法直接升级",
       "failDetail": "先升级到 Windows 10 2004 及以上（推荐 22H2）再考虑升级 Windows 11",
       "unknownReason": "无法读取系统版本"
+    },
+    "gpuDriver": {
+      "name": "显卡驱动",
+      "requirement": "需要已安装厂商显卡驱动（WDDM 2.0 及以上）",
+      "passDetail": "驱动已正常安装，支持 DirectX 12 / WDDM 2.0+",
+      "wddmInferred": "（WDDM 由 DX12 特性级别推断）",
+      "failReason": "显卡驱动异常或未安装",
+      "failDetail": "到显卡厂商官网更新驱动（NVIDIA / AMD / Intel）",
+      "unknownReason": "无法读取显卡驱动信息"
+    },
+    "gpuDriverAge": {
+      "name": "显卡驱动时效",
+      "requirement": "驱动发布日期不超过 18 个月",
+      "passDetail": "驱动较新，未超过 18 个月",
+      "warnReason": "驱动已发布 {0} 个月，建议更新",
+      "warnDetail": "新驱动通常修复游戏兼容性与安全问题",
+      "unknownReason": "无法读取驱动日期"
+    }
+  },
+  "software": {
+    "categories": {
+      "database": "数据库",
+      "container": "容器与虚拟机",
+      "webServer": "Web 服务器",
+      "language": "编程语言",
+      "devTool": "开发工具",
+      "common": "常用软件"
+    },
+    "names": {
+      "wechat": "微信",
+      "netease": "网易云音乐"
+    },
+    "details": {
+      "port": "{0} 端口",
+      "engine": "引擎 {0}",
+      "client": "客户端 {0}",
+      "sdkCount": "已安装 {0} 个 SDK：{1}",
+      "instance": "实例 {0}",
+      "sqliteDll": "系统自带 SQLite 数据库",
+      "withVisualStudio": "随 Visual Studio 安装",
+      "androidPlatforms": "platform-tools + {0} 个平台"
     }
   },
   "score": {

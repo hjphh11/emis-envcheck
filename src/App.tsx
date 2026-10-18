@@ -24,8 +24,10 @@ import { AdminBanner } from "./components/AdminBanner";
 import { Skeleton } from "./components/Skeleton";
 import { ErrorCard } from "./components/ErrorCard";
 import { Footer } from "./components/Footer";
+import { AboutModal } from "./components/AboutModal";
 import { ToastHost } from "./components/ui/Toast";
 import type { ToastData } from "./components/ui/Toast";
+import { silhouetteUrl } from "./components/ui/emis";
 import { Dashboard } from "./components/pages/Dashboard";
 import { Runtime } from "./components/pages/Runtime";
 import { Compat } from "./components/pages/Compat";
@@ -70,6 +72,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastData | null>(null);
   const [elevating, setElevating] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const initialized = useRef(false);
 
   const notify = useCallback((message: string, tone: "ok" | "err" = "ok") => {
@@ -113,6 +116,18 @@ export default function App() {
     const onHash = () => setTab(hashTab());
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  /* 切到后台时暂停所有持续动画（骨架 shimmer / 呼吸点 / 数值脉冲） */
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => root.classList.toggle("qhidden", document.hidden);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      root.classList.remove("qhidden");
+    };
   }, []);
 
   const changeTab = useCallback((key: string) => {
@@ -169,13 +184,48 @@ export default function App() {
   }, [notify]);
 
   const closeToast = useCallback(() => setToast(null), []);
+  const closeAbout = useCallback(() => setAboutOpen(false), []);
+
+  /* —— 全局快捷键：Ctrl+R 重扫 / Ctrl+E 导出 HTML / Ctrl+1..4 切页签 ——
+     输入框内不抢按键；浏览器预览里这些组合也会被 preventDefault。 */
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName ?? "";
+      if (tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable) return;
+      const key = e.key.toLowerCase();
+      if (key === "r") {
+        e.preventDefault();
+        void runScan();
+      } else if (key === "e") {
+        e.preventDefault();
+        void handleExport("html");
+      } else if (key === "1" || key === "2" || key === "3" || key === "4") {
+        const targetTab = TABS[Number(key) - 1];
+        if (targetTab) {
+          e.preventDefault();
+          changeTab(targetTab.key);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [runScan, handleExport, changeTab]);
 
   const showSkeleton = loading && !scan;
   const isAdmin = scan ? scan.meta.isAdmin !== false : true;
-  const version = info?.version || "1.0.0";
+  /* 采集器还没升到 1.1.0 之前，界面按发布版本显示；Rust 侧升版后自动跟随 */
+  const version =
+    info?.version && info.version !== "1.0.0" ? info.version : "1.1.0";
 
   return (
     <div className="app">
+      {/* 右下角爱弥斯剪影水印：极淡、不挡交互，只做氛围 */}
+      <div className="app-emis-bg" aria-hidden="true">
+        <img src={silhouetteUrl} alt="" draggable={false} />
+      </div>
+
       <TitleBar />
 
       <header className="app-header">
@@ -218,13 +268,16 @@ export default function App() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={tab}
-                initial={reduced ? false : { opacity: 0, y: 8 }}
+                role="tabpanel"
+                id={`panel-${tab}`}
+                aria-labelledby={`tab-${tab}`}
+                initial={reduced ? false : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
                 transition={
                   reduced
                     ? { duration: 0 }
-                    : { duration: 0.26, ease: [0.16, 1, 0.3, 1] }
+                    : { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
                 }
               >
                 {tab === "dashboard" && (
@@ -239,7 +292,8 @@ export default function App() {
         )}
       </main>
 
-      <Footer version={version} />
+      <Footer version={version} onAbout={() => setAboutOpen(true)} />
+      <AboutModal open={aboutOpen} version={version} onClose={closeAbout} />
       <ToastHost toast={toast} onClose={closeToast} />
     </div>
   );

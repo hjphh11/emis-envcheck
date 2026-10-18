@@ -21,7 +21,7 @@ export function Toolbar({ scanning, canExport, onRescan, onExport }: ToolbarProp
         iconSpin={scanning}
         onClick={onRescan}
         disabled={scanning}
-        title="重新采集一次全部信息"
+        title="重新采集一次全部信息 (Ctrl+R)"
       >
         {scanning ? "扫描中…" : "重新扫描"}
       </Button>
@@ -36,7 +36,7 @@ export function Toolbar({ scanning, canExport, onRescan, onExport }: ToolbarProp
           className="btn"
           disabled={!canExport}
           onClick={() => onExport("html")}
-          title="导出自包含 HTML 报告"
+          title="导出自包含 HTML 报告 (Ctrl+E)"
         >
           HTML
         </button>

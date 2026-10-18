@@ -7,7 +7,8 @@
 #    - every documented field exists and has the right type / nullability
 #    - no "" / "N/A" / -1 sentinels for unknown values
 #    - date-time strings are ISO-8601 with a UTC offset
-#    - compat items >= 11, status enum valid, counts/verdict consistent
+#    - compat items >= 17 (includes gpu.driver / gpu.driverAge), status enum valid,
+#      counts/verdict consistent
 #    - score parts/weights/level consistent
 #    - no mojibake (U+FFFD) in embedded Chinese text
 #
@@ -384,7 +385,7 @@ foreach ($ad in @($j.network.adapters)) {
 # ---- runtime ----
 Test-Section 'runtime' $j.runtime @(
     'dotnetFramework', 'dotnetRuntimes', 'vcpp', 'directx', 'webview2',
-    'java', 'node', 'python', 'git', 'wsl', 'powershellVersion'
+    'java', 'node', 'python', 'git', 'wsl', 'powershellVersion', 'software'
 )
 Test-ArrField 'runtime.dotnetFramework' $j.runtime.dotnetFramework
 foreach ($fx in @($j.runtime.dotnetFramework)) {
@@ -434,6 +435,28 @@ Test-StrField 'runtime.wsl.version' $j.runtime.wsl.version
 Test-ArrField 'runtime.wsl.distros' $j.runtime.wsl.distros
 Test-StrField 'runtime.powershellVersion' $j.runtime.powershellVersion $false
 
+# ---- runtime.software (installed third-party software) ----
+Test-ArrField 'runtime.software' $j.runtime.software
+Check 'runtime.software has at least 1 entry' (@($j.runtime.software).Count -ge 1) ([string]@($j.runtime.software).Count)
+$seenSoftware = @{}
+$categoryCounts = @{}
+foreach ($sw in @($j.runtime.software)) {
+    Test-Section 'runtime.software[]' $sw @('name', 'version', 'path', 'category', 'source', 'running', 'detail') @('version', 'path', 'source', 'running', 'detail')
+    Test-StrField 'runtime.software[].name' $sw.name $false
+    Check 'runtime.software[].name is short (<= 60 chars)' (([string]$sw.name).Length -le 60) ([string]$sw.name)
+    Check 'software[].category enum' ($sw.category -in @('database', 'container', 'webServer', 'language', 'devTool', 'common')) ([string]$sw.category)
+    if ($null -ne $sw.source) { Check 'software[].source enum' ($sw.source -in @('registry', 'service', 'path', 'command', 'dir')) ([string]$sw.source) }
+    if ($null -ne $sw.version) { Test-StrField 'runtime.software[].version' $sw.version $true }
+    if ($null -ne $sw.path) { Test-StrField 'runtime.software[].path' $sw.path $true }
+    if ($null -ne $sw.detail) { Test-StrField 'runtime.software[].detail' $sw.detail $true }
+    Test-BoolField 'runtime.software[].running' $sw.running
+    $swKey = ([string]$sw.name).ToLowerInvariant()
+    if ($seenSoftware.ContainsKey($swKey)) { Check ('software name unique: ' + [string]$sw.name) $false 'duplicate name' } else { $seenSoftware[$swKey] = $true }
+    $swCategory = [string]$sw.category
+    if ($categoryCounts.ContainsKey($swCategory)) { $categoryCounts[$swCategory] = $categoryCounts[$swCategory] + 1 } else { $categoryCounts[$swCategory] = 1 }
+}
+Check 'runtime.software categories are known' (@($categoryCounts.Keys | Where-Object { $_ -notin @('database', 'container', 'webServer', 'language', 'devTool', 'common') }).Count -eq 0) ($categoryCounts.Keys -join ',')
+
 # ---- security ----
 Test-Section 'security' $j.security @('defenderRealtime', 'antivirus', 'firewall', 'secureBoot', 'tpm', 'uac') @('defenderRealtime', 'firewall', 'secureBoot', 'tpm', 'uac')
 Test-BoolField 'security.defenderRealtime' $j.security.defenderRealtime
@@ -447,7 +470,10 @@ Test-StrField 'security.uac' $j.security.uac
 Test-Section 'compat' $j.compat @('verdict', 'passCount', 'warnCount', 'failCount', 'unknownCount', 'items')
 Check 'compat.verdict enum' ($j.compat.verdict -in @('ok', 'warn', 'blocked')) ([string]$j.compat.verdict)
 Test-ArrField 'compat.items' $j.compat.items
-Check 'compat.items >= 11' (@($j.compat.items).Count -ge 11) ([string]@($j.compat.items).Count)
+Check 'compat.items >= 17' (@($j.compat.items).Count -ge 17) ([string]@($j.compat.items).Count)
+$compatIds = @(@($j.compat.items) | ForEach-Object { [string]$_.id })
+Check 'compat has gpu.driver item' ($compatIds -contains 'gpu.driver') 'missing'
+Check 'compat has gpu.driverAge item' ($compatIds -contains 'gpu.driverAge') 'missing'
 $statusCounts = @{ pass = 0; warn = 0; fail = 0; unknown = 0 }
 $seenIds = @{}
 foreach ($ci in @($j.compat.items)) {

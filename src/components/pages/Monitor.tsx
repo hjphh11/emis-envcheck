@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Activity, Cpu, HardDrive, MemoryStick, Network } from "lucide-react";
 import type { LiveSnapshot } from "../../types";
 import { liveSnapshot } from "../../lib/api";
@@ -19,6 +20,24 @@ import { Tag } from "../ui/Tag";
 
 /** 保留最近 60 个点（约 1 分钟） */
 const MAX_POINTS = 60;
+
+/**
+ * 数值更新时闪一下（180ms 颜色脉冲，不位移、不跳字号）。
+ * 每次数据变化 key 改变 → 重新挂载 → 动画重播，代价只有一个 span。
+ */
+function PulseValue({
+  value,
+  style,
+}: {
+  value: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <span key={value} className="metric-hero__value metric-pulse" style={style}>
+      {value}
+    </span>
+  );
+}
 
 export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
   const [history, setHistory] = useState<LiveSnapshot[]>([]);
@@ -111,9 +130,7 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
           extra={<span className="tiny">最近 60 秒</span>}
         >
           <div className="metric-hero">
-            <span className="metric-hero__value">
-              {fmtPct(latest?.cpuUsage, 1, "--")}
-            </span>
+            <PulseValue value={fmtPct(latest?.cpuUsage, 1, "--")} />
             <span className="metric-hero__unit">CPU</span>
             <div className="metric-hero__aside">
               当前频率 {fmtMhz(latest?.cpuFreqMhz, "--")}
@@ -142,9 +159,7 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
           extra={<span className="tiny">{history.length} 个样本</span>}
         >
           <div className="metric-hero">
-            <span className="metric-hero__value">
-              {fmtPct(memPct, 1, "--")}
-            </span>
+            <PulseValue value={fmtPct(memPct, 1, "--")} />
             <span className="metric-hero__unit">已用</span>
             <div className="metric-hero__aside">
               {fmtBytes(latest?.memUsedBytes, "--")} /{" "}
@@ -173,12 +188,10 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
         {/* 网络 */}
         <GlassCard index={baseIndex + 2} title="网络" icon={Network}>
           <div className="metric-hero">
-            <span
-              className="metric-hero__value"
+            <PulseValue
+              value={fmtSpeed(latest?.netRxBps, "--")}
               style={{ fontSize: 30, letterSpacing: 0 }}
-            >
-              {fmtSpeed(latest?.netRxBps, "--")}
-            </span>
+            />
             <span className="metric-hero__unit">下行</span>
             <div className="metric-hero__aside">
               上行 {fmtSpeed(latest?.netTxBps, "--")}
