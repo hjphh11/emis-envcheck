@@ -88,9 +88,9 @@ SSE4.2 / POPCNT 指令集 · 分区表 GPT · 操作系统版本 · **显卡驱�
 
 ## 下载与使用
 
-1. 到 [Releases](https://github.com/hjphh11/emis-envcheck/releases) 下载 `爱弥斯·环境检测.exe`
-2. 放到任意目录（桌面、U 盘、移动硬盘都行），双击
-3. 首次会花 4–6 秒扫描，之后随开随用
+1. 到 [Releases](https://github.com/hjphh11/emis-envcheck/releases) 下载 `EmisEnvCheck-v1.1.0-windows-x64.exe`（6.1 MB）
+2. 放到任意目录（桌面、U 盘、移动硬盘都行），双击（窗口标题显示「爱弥斯 · 环境检测」）
+3. 首次会花 4–7 秒扫描，之后随开随用
 
 > 想拿到温度、风扇转速、硬盘 SMART 明细、TPM 详情这些**深度数据**，需要管理员权限：
 > 界面右上角有「以管理员重启」，点一下即可。普通权限也能用，只是对应项显示为不可用。
@@ -160,8 +160,9 @@ pwsh -File scripts\build-portable.ps1
 国内网络建议给 cargo 配 rsproxy 镜像、npm 用 npmmirror。
 改了界面文案后记得 `python scripts/subset-fonts.py` 重新裁字体子集。
 
-> 也可以让 GitHub Actions 帮你构建：推送到 `main` 或打 `v*` 标签，
-> [`.github/workflows/build.yml`](.github/workflows/build.yml) 会自动编出 exe 并上传 artifact；打标签时自动发 Release。
+> CI：仓库里已备好 `.github/workflows/build.yml`（推 tag 自动构建 + 发 Release），
+> 但推送 workflow 文件需要 GitHub token 带 `workflow` 权限，本地先执行
+> `gh auth refresh -h github.com -s workflow` 后再 `git add .github/workflows/build.yml && git push`。
 
 ## 数据采集说明
 
