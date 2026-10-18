@@ -1,0 +1,30 @@
+# 依赖 / 构建产物
+node_modules
+dist
+dist-ssr
+*.local
+src-tauri/target/
+src-tauri/gen/
+
+# 打包输出
+release/
+*.msi
+*.nsis.zip
+
+# 本地临时 / 调试
+dev/sample-scan.json
+dev/*.log
+.tmp/
+
+# 日志
+logs
+*.log
+npm-debug.log*
+
+# 编辑器
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.sw?
