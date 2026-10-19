@@ -88,8 +88,8 @@ SSE4.2 / POPCNT 指令集 · 分区表 GPT · 操作系统版本 · **显卡驱�
 
 ## 下载与使用
 
-1. 到 [Releases](https://github.com/hjphh11/emis-envcheck/releases) 下载 `爱弥斯环境检测-v1.2.0-绿色版.zip`（3.2 MB，内含 exe + 使用说明）
-   —— 也可以直接下 `爱弥斯·环境检测.exe`（6.1 MB）单文件
+1. 到 [Releases](https://github.com/hjphh11/emis-envcheck/releases/latest) 下载 `EmisEnvCheck-v1.3.1-portable.zip`（3.0 MB，内含 exe + 使用说明）
+   —— 也可以直接下 `EmisEnvCheck-v1.3.1-windows-x64.exe`（6.1 MB）单文件
 2. 解压后放到任意目录（桌面、U 盘、移动硬盘都行），双击（窗口标题显示「爱弥斯 · 环境检测」）
 3. 首次会花 4–8 秒扫描，之后随开随用
 
