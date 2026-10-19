@@ -161,9 +161,10 @@ pwsh -File scripts\build-portable.ps1
 国内网络建议给 cargo 配 rsproxy 镜像、npm 用 npmmirror。
 改了界面文案后记得 `python scripts/subset-fonts.py` 重新裁字体子集。
 
-> CI：仓库里已备好 `.github/workflows/build.yml`（推 tag 自动构建 + 发 Release），
-> 但推送 workflow 文件需要 GitHub token 带 `workflow` 权限，本地先执行
-> `gh auth refresh -h github.com -s workflow` 后再 `git add .github/workflows/build.yml && git push`。
+> **CI 已启用**：`.github/workflows/build.yml` 在推 `main` 或打 `v*` 标签时自动运行，
+> 依次做「版本号一致性 → tsc → `dev/verify.ps1` 契约自检 → `cargo clippy -D warnings`
+> → `cargo test` → 构建单文件 exe + 绿色版 zip」，打标签时还会自动创建 Release
+> 并附上 `EmisEnvCheck-v<version>-windows-x64.exe` 与 `-portable.zip`。
 
 ## 数据采集说明
 
