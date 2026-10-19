@@ -42,6 +42,3 @@ scripts/fonts-src/
 
 # 并行会话 / 其他工具的工作目录（不属于本项目代码）
 .workbuddy/
-
-# 需要 gh token 的 workflow scope 才能推送（本机 token 没有）
-.github/workflows/build.yml
