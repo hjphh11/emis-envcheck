@@ -18,9 +18,13 @@ export interface AboutModalProps {
 export function AboutModal({ open, version, onClose }: AboutModalProps) {
   const reduced = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  /* 打开前的焦点位置：关闭后要还回去，否则键盘用户会被扔到文档开头 */
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
+    const active = document.activeElement;
+    returnFocusRef.current = active instanceof HTMLElement ? active : null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const focusTimer = window.setTimeout(() => closeRef.current?.focus(), 80);
@@ -56,6 +60,10 @@ export function AboutModal({ open, version, onClose }: AboutModalProps) {
       document.body.style.overflow = prevOverflow;
       window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", onKey);
+      /* 关闭后把焦点还给「关于」按钮；元素可能已被移除，用 isConnected 判一下 */
+      const back = returnFocusRef.current;
+      if (back?.isConnected) back.focus();
+      returnFocusRef.current = null;
     };
   }, [open, onClose]);
 

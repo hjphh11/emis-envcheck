@@ -109,6 +109,7 @@
     "wslListFailed": "WSL 已安装，但无法列出已安装发行版：{0}",
     "sectionFailed": "采集项「{0}」失败：{1}",
     "sectionSlow": "采集项「{0}」耗时 {1} ms，偏慢",
+    "probeSkipped": "为控制总耗时，跳过了「{0}」的版本探测（结果可能显示为未知）",
     "dotnetFallback": "未找到 dotnet 命令，已改为扫描 C:\\Program Files\\dotnet\\shared 目录",
     "vcppEmpty": "未从卸载注册表读到 VC++ 运行库信息",
     "tpmUnknown": "TPM 状态无法判定：需要管理员权限或该设备不支持",
@@ -173,11 +174,13 @@
       "unknownReason": "无法读取物理内存容量"
     },
     "diskSpace": {
-      "name": "系统盘可用空间",
-      "requirement": "至少 64 GB 可用空间",
-      "passDetail": "满足 Windows 11 安装与更新所需空间",
-      "failReason": "系统盘可用空间不足 64 GB",
-      "failDetail": "清理磁盘或更换更大容量硬盘",
+      "name": "系统盘容量与可用空间",
+      "requirement": "设备容量 ≥ 64 GB（建议保留 20 GB 以上可用空间）",
+      "passDetail": "容量满足 Windows 11 安装要求",
+      "failReason": "系统盘容量不足 64 GB",
+      "failDetail": "系统盘容量低于 Windows 11 要求的 64 GB，建议更换更大容量硬盘",
+      "warnReason": "系统盘容量满足要求，但可用空间偏少（建议保留 20 GB 以上）",
+      "warnDetail": "清理临时文件或卸载不用的软件，为系统更新留出空间",
       "unknownReason": "无法读取系统盘容量"
     },
     "uefi": {

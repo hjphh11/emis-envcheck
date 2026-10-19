@@ -2,6 +2,7 @@
  * 展示层格式化工具。
  * 原则：拿不到的字段一律显示「未知」，绝不把 null / undefined / NaN 漏到界面上。
  */
+import type { CheckStatus, DiskHealth, SoftwareCategory } from "../types";
 
 /** 字符串兜底 */
 export function text(v: string | null | undefined, fallback = "未知"): string {
@@ -161,11 +162,82 @@ export interface LevelInfo {
 
 /** 评分 → 等级文案（阈值按需求：≥90 优秀 / 80–89 良好 / 60–79 一般 / <60 较差） */
 export function levelInfo(total: number | null | undefined): LevelInfo {
-  const v = total ?? 0;
+  /* 拿不到总分时不能按 0 分算成「较差」——那是把「没采到」说成「机器差」 */
+  if (total == null || !Number.isFinite(total)) {
+    return { label: "未知", tone: "plain", hand: "" };
+  }
+  const v = total;
   if (v >= 90) return { label: "优秀", tone: "ok", hand: "这台机器状态很精神～" };
   if (v >= 80) return { label: "良好", tone: "ok", hand: "整体状态不错～" };
   if (v >= 60) return { label: "一般", tone: "warn", hand: "有些地方可以再收拾一下" };
   return { label: "较差", tone: "fail", hand: "建议先处理一下短板" };
+}
+
+/* ============================================================
+ * 枚举归一化 / 中文映射（界面与导出报告共用一份，避免两处不一致）
+ * 采集器是老 PowerShell 脚本，枚举值可能拼错或缺失，一律先归一化再展示。
+ * ============================================================ */
+
+/** 非法 / 缺失的检测结论一律归到 unknown，绝不把 undefined 漏到界面上 */
+export function normalizeCheckStatus(v: unknown): CheckStatus {
+  return v === "pass" || v === "warn" || v === "fail" || v === "unknown"
+    ? v
+    : "unknown";
+}
+
+/** 非法 / 缺失的升级结论一律归到 warn（比误报「可以升级」安全） */
+export function normalizeVerdict(v: unknown): "ok" | "warn" | "blocked" {
+  return v === "ok" || v === "warn" || v === "blocked" ? v : "warn";
+}
+
+export interface DiskHealthInfo {
+  text: string;
+  tone: "ok" | "warn" | "fail" | "muted";
+}
+
+/** 磁盘健康枚举 → 中文与语气（报告里曾直接打印 healthy 这种英文枚举） */
+export function diskHealthInfo(
+  health: DiskHealth | string | null | undefined,
+): DiskHealthInfo {
+  switch (health) {
+    case "healthy":
+      return { text: "健康", tone: "ok" };
+    case "warning":
+      return { text: "有警告", tone: "warn" };
+    case "critical":
+      return { text: "异常", tone: "fail" };
+    default:
+      return { text: "未知", tone: "muted" };
+  }
+}
+
+/** 已安装软件的分类顺序与中文名（环境页与报告共用） */
+export const SOFTWARE_CATEGORY_ORDER: SoftwareCategory[] = [
+  "database",
+  "container",
+  "webServer",
+  "language",
+  "devTool",
+  "common",
+];
+
+export const SOFTWARE_CATEGORY_LABEL: Record<SoftwareCategory, string> = {
+  database: "数据库",
+  container: "容器与虚拟化",
+  webServer: "Web 服务",
+  language: "开发语言",
+  devTool: "开发工具",
+  common: "常用软件",
+};
+
+/** 未知分类（采集器将来加新枚举时的兜底展示名） */
+export const SOFTWARE_CATEGORY_FALLBACK = "其他";
+
+/** 软件分类 → 中文名，非法值兜底「其他」 */
+export function softwareCategoryLabel(v: unknown): string {
+  return (
+    SOFTWARE_CATEGORY_LABEL[v as SoftwareCategory] ?? SOFTWARE_CATEGORY_FALLBACK
+  );
 }
 
 /** 五维子分的暖色分段：≥90 高 / 75–89 良好 / 60–74 中性 / <60 低 */

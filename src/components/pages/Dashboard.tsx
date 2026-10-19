@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import {
   Check,
   CircuitBoard,
@@ -6,6 +7,7 @@ import {
   Cpu,
   Gauge as GaugeIcon,
   HardDrive,
+  Info,
   MemoryStick,
   Monitor,
   Network,
@@ -16,6 +18,8 @@ import {
 import type { MotherboardInfo, ScanResult, SecurityInfo } from "../../types";
 import { copyText } from "../../lib/api";
 import {
+  clampPct,
+  diskHealthInfo,
   fmtBytes,
   fmtCores,
   fmtDate,
@@ -64,28 +68,41 @@ function joinParts(parts: Array<string | null | undefined>): string {
   return parts.filter(Boolean).join(" ").trim() || "未知";
 }
 
+/** 采集耗时文案：缺失时不能渲染成 NaN 秒 */
+function scanMsText(ms: number | null | undefined): string {
+  return ms != null && Number.isFinite(ms) ? `${(ms / 1000).toFixed(1)} 秒` : "未知";
+}
+
+/** 内存条电压：1100 mV → 1.10 V（没采到就不显示，不占位） */
+function fmtVoltage(mv: number | null | undefined): string | null {
+  if (mv == null || !Number.isFinite(mv) || mv <= 0) return null;
+  return `${(mv / 1000).toFixed(2)} V`;
+}
+
 /** 把关键配置拼成一行紧凑文本 */
 export function buildConfigCode(scan: ScanResult): string {
-  const { cpu, memory, gpus, motherboard, system } = scan;
-  const gpu =
-    gpus.find((g) => g.discrete) ??
-    gpus[0];
-  const module = memory.modules[0];
+  const { cpu, memory, system } = scan;
+  /* 这一段也会被 ErrorBoundary 之外的地方调用（复制按钮），所有块都按可能缺失处理 */
+  const gpus = scan.gpus ?? [];
+  const motherboard = scan.motherboard ?? ({} as ScanResult["motherboard"]);
+  const modules = memory?.modules ?? [];
+  const gpu = gpus.find((g) => g.discrete) ?? gpus[0];
+  const module = modules[0];
   const memType = module?.type ?? "";
   const memSpeed = module?.speedMhz ? `-${module.speedMhz}` : "";
-  const mem = `${fmtBytes(memory.totalBytes).replace(/\s+/g, "")}${
+  const mem = `${fmtBytes(memory?.totalBytes).replace(/\s+/g, "")}${
     memType ? ` ${memType}${memSpeed}` : ""
   }`;
   const gpuText = gpu
-    ? `${gpu.name.replace(/^NVIDIA\s+|^AMD\s+/i, "")}${
+    ? `${text(gpu.name).replace(/^NVIDIA\s+|^AMD\s+/i, "")}${
         gpu.vramBytes ? ` ${fmtBytes(gpu.vramBytes).replace(/\s+/g, "")}` : ""
       }`
     : "显卡未知";
-  const board = motherboard?.model ?? motherboard?.vendor ?? "主板未知";
-  const os = `${system.caption}${system.displayVersion ? ` ${system.displayVersion}` : ""}${
-    system.build ? `·${system.build}` : ""
-  }`;
-  return [cpu.brand, mem, gpuText, board, os].join(" / ");
+  const board = motherboard.model ?? motherboard.vendor ?? "主板未知";
+  const os = `${text(system?.caption)}${
+    system?.displayVersion ? ` ${system.displayVersion}` : ""
+  }${system?.build ? `·${system.build}` : ""}`;
+  return [text(cpu?.brand), mem, gpuText, board, os].join(" / ");
 }
 
 /** 浏览器预览里 navigator.clipboard 可能被权限策略拦掉，这里用旧接口兜底一次 */
@@ -108,7 +125,19 @@ function legacyCopy(text: string): boolean {
 }
 
 export function Dashboard({ scan, notify }: DashboardProps) {
-  const { score, system, cpu, memory, gpus, displays, disks, network } = scan;
+  /* 数组/子对象一律兜底：删掉任意 section 或子数组都不该整页崩（审计实测会抛异常） */
+  const score = scan.score ?? ({} as ScanResult["score"]);
+  const system = scan.system ?? ({} as ScanResult["system"]);
+  const cpu = scan.cpu ?? ({} as ScanResult["cpu"]);
+  const memory = scan.memory ?? ({} as ScanResult["memory"]);
+  const meta = scan.meta ?? ({} as ScanResult["meta"]);
+  const gpus = scan.gpus ?? [];
+  const displays = scan.displays ?? [];
+  const disks = scan.disks ?? [];
+  const network = scan.network ?? ({} as ScanResult["network"]);
+  const adapters = network.adapters ?? [];
+  const modules = memory.modules ?? [];
+  const instructions = cpu.instructions ?? [];
   /* 老采集器 / 异常数据可能没有这两个块，统一兜底成空对象，界面只显示「未知」 */
   const security: Partial<SecurityInfo> = scan.security ?? {};
   const motherboard: Partial<MotherboardInfo> = scan.motherboard ?? {};
@@ -116,10 +145,21 @@ export function Dashboard({ scan, notify }: DashboardProps) {
   const defenderTri = triState(security.defenderRealtime, "已开启", "已关闭");
   const secBootTri = triState(security.secureBoot);
   const boardSecBootTri = triState(motherboard.secureBoot);
+  const fastStartupTri = triState(system.fastStartup, "已开启", "已关闭");
+  const hyperVTri = triState(system.hyperV, "已启用", "未启用");
   const level = levelInfo(score.total);
   const [copied, setCopied] = useState(false);
   const configCode = buildConfigCode(scan);
   const parts = score.parts ?? [];
+  /* 采集器写进 meta.warnings 的说明：之前全链路没有出口，用户看不到「为什么是未知」 */
+  const warnings = (meta.warnings ?? []).filter(
+    (w): w is string => typeof w === "string" && w.trim().length > 0,
+  );
+  /* 展示层 clamp：total > 100 或 usedPct 越界时环/条不能画爆，另外标「数据异常」 */
+  const scoreOutOfRange =
+    score.total != null && (score.total < 0 || score.total > 100);
+  const usedPctOutOfRange =
+    memory.usedPct != null && (memory.usedPct < 0 || memory.usedPct > 100);
 
   const copyConfig = async () => {
     let ok = false;
@@ -136,6 +176,21 @@ export function Dashboard({ scan, notify }: DashboardProps) {
     setCopied(true);
     notify("配置码已复制到剪贴板");
     window.setTimeout(() => setCopied(false), 1800);
+  };
+
+  /** 焦点在本节点内、且没有选中文字时，Ctrl+C 才复制整行配置码 */
+  const onConfigKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "c") return;
+    const el = e.currentTarget;
+    const selection = window.getSelection();
+    const anchor = selection?.anchorNode ?? null;
+    const selectionInside =
+      Boolean(selection && selection.toString()) &&
+      anchor != null &&
+      el.contains(anchor);
+    if (selectionInside) return;
+    e.preventDefault();
+    void copyConfig();
   };
 
   return (
@@ -163,10 +218,16 @@ export function Dashboard({ scan, notify }: DashboardProps) {
           <p className="score-card__hand">{level.hand}</p>
           <div className="score-card__foot">
             <div className="score-card__meta">
-              采集耗时 {(scan.meta.scanMs / 1000).toFixed(1)} 秒 ·{" "}
-              {fmtDateTime(scan.meta.generatedAt)}
+              采集耗时 {scanMsText(meta.scanMs)} ·{" "}
+              {fmtDateTime(meta.generatedAt)}
               <br />
-              {scan.meta.isAdmin ? "管理员权限 · 明细完整" : "普通权限 · 部分明细不可用"}
+              {meta.isAdmin ? "管理员权限 · 明细完整" : "普通权限 · 部分明细不可用"}
+              {scoreOutOfRange && (
+                <>
+                  <br />
+                  <span className="subtle">数据异常：评分超出 0–100</span>
+                </>
+              )}
             </div>
             <img
               className="score-card__portrait"
@@ -262,6 +323,15 @@ export function Dashboard({ scan, notify }: DashboardProps) {
               v={`${text(system.hostname)} · ${text(system.username)}`}
               mono
             />
+            <InfoRow k="域 / 工作组" v={text(system.domain)} />
+            <InfoRow
+              k="整机序列号"
+              v={text(system.serial)}
+              mono
+              title={system.serial ?? undefined}
+            />
+            <InfoRow k="快速启动" v={fastStartupTri.text} tone={fastStartupTri.tone} />
+            <InfoRow k="Hyper-V" v={hyperVTri.text} tone={hyperVTri.tone} />
             <InfoRow k="电源计划" v={text(system.powerPlan)} />
             <InfoRow k="安装日期" v={fmtDate(system.installDate)} />
           </InfoGrid>
@@ -299,11 +369,12 @@ export function Dashboard({ scan, notify }: DashboardProps) {
               v={`${text(cpu.socket)} · ${cpu.virtualization == null ? "虚拟化未知" : cpu.virtualization ? "虚拟化已开启" : "虚拟化未开启"}`}
             />
           </InfoGrid>
-          {cpu.instructions.length > 0 && (
+          {instructions.length > 0 && (
             <div className="inline-tags">
-              {cpu.instructions.map((i) => (
-                <Tag key={i} tone="outline">
-                  {i}
+              {/* key 带上索引：采集器偶尔给重复的指令集名，纯 v 做 key 会告警 */}
+              {instructions.map((ins, idx) => (
+                <Tag key={`${idx}-${ins}`} tone="outline">
+                  {ins}
                 </Tag>
               ))}
             </div>
@@ -319,11 +390,20 @@ export function Dashboard({ scan, notify }: DashboardProps) {
           <ProgressBar
             value={memory.usedPct}
             tone={
-              memory.usedPct >= 90 ? "fail" : memory.usedPct >= 75 ? "warn" : "default"
+              (memory.usedPct ?? 0) >= 90
+                ? "fail"
+                : (memory.usedPct ?? 0) >= 75
+                  ? "warn"
+                  : "default"
             }
             size="lg"
             label="内存使用率"
           />
+          {usedPctOutOfRange && (
+            <p className="tiny" style={{ marginTop: 4 }}>
+              数据异常：使用率超出 0–100（已按边界显示）
+            </p>
+          )}
           <div className="mem-stats">
             <div className="mem-stat">
               <span className="mem-stat__k">总容量</span>
@@ -344,10 +424,10 @@ export function Dashboard({ scan, notify }: DashboardProps) {
               </span>
             </div>
           </div>
-          {memory.modules.length === 0 ? (
+          {modules.length === 0 ? (
             <Empty>未检测到内存条明细。</Empty>
           ) : (
-            memory.modules.map((m, i) => (
+            modules.map((m, i) => (
               <div className="module" key={`${m.slot ?? "slot"}-${i}`}>
                 <span className="module__name" title={m.partNumber ?? undefined}>
                   {text(m.slot, `内存条 ${i + 1}`)} · {text(m.partNumber, "型号未知")}
@@ -356,9 +436,14 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                 <span className="module__meta">
                   {[
                     m.type,
-                    m.speedMhz ? `${m.speedMhz} MHz` : m.ratedMhz ? `${m.ratedMhz} MHz` : null,
+                    m.speedMhz
+                      ? `${m.speedMhz} MHz`
+                      : m.ratedMhz
+                        ? `${m.ratedMhz} MHz`
+                        : null,
                     m.manufacturer,
                     m.formFactor,
+                    fmtVoltage(m.voltageMv),
                   ]
                     .filter(Boolean)
                     .join(" · ") || "规格未知"}
@@ -429,30 +514,17 @@ export function Dashboard({ scan, notify }: DashboardProps) {
             <Empty>未检测到硬盘。</Empty>
           ) : (
             disks.map((d, i) => {
-              const healthTone =
-                d.health === "healthy"
-                  ? "ok"
-                  : d.health === "warning"
-                    ? "warn"
-                    : d.health === "critical"
-                      ? "fail"
-                      : "muted";
-              const healthText =
-                d.health === "healthy"
-                  ? "健康"
-                  : d.health === "warning"
-                    ? "有警告"
-                    : d.health === "critical"
-                      ? "异常"
-                      : "未知";
+              /* 枚举 → 中文与语气集中到 format.ts，报告与界面共用同一份映射 */
+              const health = diskHealthInfo(d.health);
+              const volumes = d.volumes ?? [];
               return (
                 <div className="disk-block" key={`${d.model}-${i}`}>
                   <div className="disk-top">
                     <span className="disk-model" title={d.model}>
                       {text(d.model)}
                     </span>
-                    <Tag tone={healthTone === "muted" ? "muted" : healthTone}>
-                      {healthText}
+                    <Tag tone={health.tone}>
+                      {health.text}
                       {d.healthPct != null ? ` ${d.healthPct}%` : ""}
                     </Tag>
                   </div>
@@ -468,6 +540,20 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                       {d.powerOnHours != null
                         ? ` ${d.powerOnHours.toLocaleString("zh-CN")} 小时`
                         : " 未知"}
+                      {d.powerCycles != null
+                        ? ` / ${d.powerCycles.toLocaleString("zh-CN")} 次`
+                        : ""}
+                    </span>
+                  </div>
+                  <div className="disk-meta">
+                    <span title={d.vendor ?? undefined}>
+                      厂商 {text(d.vendor)}
+                    </span>
+                    <span title={d.firmware ?? undefined}>
+                      固件 {text(d.firmware)}
+                    </span>
+                    <span title={d.serial ?? undefined} className="mono">
+                      序列号 {text(d.serial)}
                     </span>
                   </div>
                   {d.healthPct != null && (
@@ -486,7 +572,7 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                       />
                     </div>
                   )}
-                  {(d.volumes ?? []).map((v) => {
+                  {volumes.map((v) => {
                     const usedPct =
                       v.totalBytes > 0
                         ? ((v.totalBytes - v.freeBytes) / v.totalBytes) * 100
@@ -496,6 +582,11 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                         <div className="volume__head">
                           <span className="volume__drive">
                             {text(v.drive)} {v.label ? `· ${v.label}` : ""}
+                            {v.fs ? (
+                              <Tag tone="outline" className="nowrap">
+                                {v.fs}
+                              </Tag>
+                            ) : null}
                           </span>
                           <span>
                             已用 {fmtBytes(v.totalBytes - v.freeBytes)} /{" "}
@@ -514,7 +605,7 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                       </div>
                     );
                   })}
-                  {d.volumes.length === 0 && <Empty>该磁盘没有可用分区信息。</Empty>}
+                  {volumes.length === 0 && <Empty>该磁盘没有可用分区信息。</Empty>}
                 </div>
               );
             })
@@ -546,10 +637,10 @@ export function Dashboard({ scan, notify }: DashboardProps) {
               DNS {network.dnsOk == null ? "未知" : network.dnsOk ? "正常" : "异常"}
             </span>
           </div>
-          {(network.adapters ?? []).length === 0 ? (
+          {adapters.length === 0 ? (
             <Empty>未检测到网络适配器。</Empty>
           ) : (
-            network.adapters.map((a, i) => (
+            adapters.map((a, i) => (
               <div className="adapter" key={`${a.name}-${i}`}>
                 <div className="adapter__top">
                   <span className="adapter__name" title={a.name}>
@@ -571,12 +662,18 @@ export function Dashboard({ scan, notify }: DashboardProps) {
                   {a.connected ? (
                     <InfoGrid>
                       <InfoRow k="IPv4" v={text(a.ipv4)} mono />
+                      <InfoRow
+                        k="IPv6"
+                        v={text(a.ipv6)}
+                        mono
+                        title={a.ipv6 ?? undefined}
+                      />
                       <InfoRow k="网关" v={text(a.gateway)} mono />
                       <InfoRow
                         k="DNS"
-                        v={a.dns.length ? a.dns.join(" / ") : "未知"}
+                        v={(a.dns ?? []).length ? (a.dns ?? []).join(" / ") : "未知"}
                         mono
-                        title={a.dns.join(" / ")}
+                        title={(a.dns ?? []).join(" / ") || undefined}
                       />
                       <InfoRow k="MAC" v={text(a.mac)} mono />
                     </InfoGrid>
@@ -593,7 +690,7 @@ export function Dashboard({ scan, notify }: DashboardProps) {
           )}
         </GlassCard>
 
-        {/* 安全：Defender / 第三方杀软 / 防火墙 / UAC / 安全启动 / TPM */}
+        {/* 安全：Defender / 第三方杀软 / 防火墙 / UAC / 安全启动 / TPM / BitLocker */}
         <GlassCard index={8} title="安全" icon={ShieldCheck}>
           <InfoGrid>
             <InfoRow
@@ -618,6 +715,7 @@ export function Dashboard({ scan, notify }: DashboardProps) {
               tone={secBootTri.tone}
             />
             <InfoRow k="TPM" v={text(security.tpm)} />
+            <InfoRow k="BitLocker" v={text(system.bitLocker)} />
           </InfoGrid>
         </GlassCard>
 
@@ -670,13 +768,7 @@ export function Dashboard({ scan, notify }: DashboardProps) {
             role="textbox"
             aria-readonly="true"
             aria-label="配置码，聚焦后按 Ctrl+C 复制"
-            onKeyDown={(e) => {
-              const noSelection = !window.getSelection()?.toString();
-              if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c" && noSelection) {
-                e.preventDefault();
-                void copyConfig();
-              }
-            }}
+            onKeyDown={onConfigKeyDown}
           >
             {configCode}
           </div>
@@ -699,6 +791,27 @@ export function Dashboard({ scan, notify }: DashboardProps) {
           />
         </p>
       </GlassCard>
+
+      {/* 采集说明：采集器写进 meta.warnings 的「哪一项为什么没采到」。
+          之前全链路没有出口，用户看到「未知」会以为是「机器没有」——体检类工具最误导人的地方。 */}
+      {warnings.length > 0 && (
+        <GlassCard
+          index={11}
+          title="采集说明"
+          icon={Info}
+          className="warnings-card"
+          extra={<span className="tiny">{warnings.length} 条</span>}
+        >
+          <p className="tiny" style={{ marginBottom: 8 }}>
+            下列项目本次没有采到或采得不全，上面对应的「未知」是「没读到」，不代表机器没有。
+          </p>
+          <ul className="warn-list">
+            {warnings.map((w, i) => (
+              <li key={`${i}-${w}`}>{w}</li>
+            ))}
+          </ul>
+        </GlassCard>
+      )}
     </div>
   );
 }

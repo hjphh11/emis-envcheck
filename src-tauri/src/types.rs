@@ -750,3 +750,134 @@ pub struct AppInfo {
     pub homepage: String,
     pub build_date: String,
 }
+
+// ============================================================
+// 契约测试
+// ============================================================
+//
+// 为什么放在单元测试里而不是 tests/ 集成测试：
+// `mod types` 在 lib.rs 里是私有的，集成测试（tests/*.rs）属于独立 crate，
+// 访问不到 `ScanResult`。所以契约断言只能放在 crate 内部。
+//
+// 这组测试补的是 dev/verify.ps1 的空白：那个脚本只校验 JSON 结构，
+// 完全不覆盖 Rust 侧的 serde 行为（camelCase 序列化、40+ 个 de_* 容错器）。
+#[cfg(test)]
+mod contract_tests {
+    use super::*;
+
+    /// 采集器产出的真实样本（已脱敏），入库于 dev/sample-scan.json。
+    const SAMPLE: &str = include_str!("../../dev/sample-scan.json");
+
+    fn parse_sample() -> ScanResult {
+        serde_json::from_str::<ScanResult>(SAMPLE).expect("真实样本必须能被 ScanResult 反序列化")
+    }
+
+    /// 样本能解析，且 13 个顶层 section 都有实质内容。
+    #[test]
+    fn sample_parses_and_sections_are_populated() {
+        let scan = parse_sample();
+
+        assert!(!scan.system.hostname.is_empty(), "system.hostname 不应为空");
+        assert!(!scan.cpu.brand.is_empty(), "cpu.brand 不应为空");
+        assert!(scan.memory.total_bytes > 0.0, "memory.totalBytes 应 > 0");
+        assert!(!scan.gpus.is_empty(), "至少应有一块显卡");
+        assert!(!scan.disks.is_empty(), "至少应有一块硬盘");
+        assert!(
+            !scan.compat.items.is_empty(),
+            "兼容性项不应为空（空 = 采集失败但被容错器吞了）"
+        );
+        assert_eq!(
+            scan.score.parts.len(),
+            5,
+            "健康评分必须恰好 5 个维度（处理器/内存/存储/显卡/系统）"
+        );
+    }
+
+    /// 序列化回前端时必须是 camelCase —— 这是前后端唯一的接口约定，
+    /// 字段名一旦变成 snake_case，前端会静默拿到 undefined。
+    #[test]
+    fn serializes_as_camel_case() {
+        let scan = parse_sample();
+        let json = serde_json::to_value(&scan).expect("ScanResult 应可序列化");
+
+        for key in [
+            "meta", "system", "motherboard", "cpu", "memory", "gpus", "displays", "disks",
+            "network", "runtime", "security", "compat", "score",
+        ] {
+            assert!(json.get(key).is_some(), "缺少顶层 section：{key}");
+        }
+
+        // 抽查各 section 里最容易写错的多词字段
+        assert!(json["meta"].get("scanMs").is_some(), "应为 scanMs 而非 scan_ms");
+        assert!(json["meta"].get("collectorVersion").is_some());
+        assert!(json["cpu"].get("physicalCores").is_some());
+        assert!(json["cpu"].get("baseMhz").is_some());
+        assert!(json["memory"].get("totalBytes").is_some());
+        assert!(json["memory"].get("dualChannelHint").is_some());
+        assert!(json["network"].get("latencyMs").is_some());
+        assert!(json["compat"].get("passCount").is_some());
+        assert!(json["compat"].get("unknownCount").is_some());
+        assert!(json["score"].get("total").is_some());
+
+        assert!(json["disks"][0].get("interfaceType").is_some());
+        assert!(json["disks"][0].get("volumes").is_some());
+        assert!(json["runtime"].get("dotnetFramework").is_some());
+        assert!(json["runtime"].get("powershellVersion").is_some());
+        assert!(
+            json["runtime"].get("software").is_some(),
+            "runtime.software 必须透传（空数组也要保留字段）"
+        );
+
+        // 反例守卫：不应出现 snake_case 泄漏
+        assert!(json["meta"].get("scan_ms").is_none(), "不应序列化成 scan_ms");
+        assert!(json["cpu"].get("physical_cores").is_none());
+    }
+
+    /// 容错器的正面能力：数字写成字符串、布尔写成 0/1、字段整个缺失都不该炸。
+    /// 采集器是 PowerShell，`ConvertTo-Json` 偶尔会把数字变成字符串。
+    #[test]
+    fn tolerant_deserializers_accept_sloppy_input() {
+        let json = r#"{
+            "meta": { "scanMs": "3120", "isAdmin": 0 },
+            "system": { "hostname": "X", "uptimeSec": "100", "fastStartup": "true" },
+            "cpu": { "brand": "CPU", "physicalCores": "8" },
+            "memory": { "totalBytes": "17179869184" },
+            "compat": { "verdict": "ok", "passCount": "9" },
+            "score": { "total": "86" }
+        }"#;
+
+        let scan: ScanResult = serde_json::from_str(json).expect("宽容反序列化不应失败");
+        assert_eq!(scan.meta.scan_ms, 3120.0, "字符串数字应被解析");
+        assert!(!scan.meta.is_admin, "0 应被解析成 false");
+        assert_eq!(scan.cpu.physical_cores, Some(8.0), "字符串数字应被解析");
+        assert_eq!(scan.memory.total_bytes, 17_179_869_184.0);
+        assert_eq!(scan.score.total, 86.0);
+        assert_eq!(scan.system.fast_startup, Some(true), "\"true\" 应被解析成 true");
+        // 缺失的 section 走 default，不 panic
+        assert!(scan.disks.is_empty());
+        assert!(scan.gpus.is_empty());
+    }
+
+    /// 类型彻底错误的字段仍然要报错，不能被静默吞掉。
+    /// （宽容 ≠ 无脑：`{"cpu": "oops"}` 属于结构性错误，必须暴露。）
+    #[test]
+    fn structurally_wrong_input_still_errors() {
+        let bad = r#"{ "cpu": "oops" }"#;
+        assert!(
+            serde_json::from_str::<ScanResult>(bad).is_err(),
+            "cpu 是字符串而非对象，应当反序列化失败"
+        );
+    }
+
+    /// 空对象会「成功」解析成全默认值 —— 这是容错设计的副作用。
+    /// 所以 scan_all 必须自己做最小有效性校验，这里锁住这个前提。
+    #[test]
+    fn empty_object_parses_into_defaults_so_caller_must_validate() {
+        let scan: ScanResult = serde_json::from_str("{}").expect("{} 会被容错器接受");
+        assert_eq!(scan.score.parts.len(), 0);
+        assert!(scan.compat.items.is_empty());
+        assert!(scan.system.hostname.is_empty());
+        // 这三个断言的意义：证明「解析成功」不代表「数据有效」，
+        // 调用方（scan_all）必须额外校验，否则会把 0 分静默当成真实结果。
+    }
+}

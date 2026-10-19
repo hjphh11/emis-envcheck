@@ -5,7 +5,11 @@ import type {
   SoftwareCategory,
   SoftwareItem,
 } from "../../types";
-import { text } from "../../lib/format";
+import {
+  SOFTWARE_CATEGORY_ORDER,
+  softwareCategoryLabel,
+  text,
+} from "../../lib/format";
 import { GlassCard } from "../ui/GlassCard";
 import { StatusDot } from "../ui/StatusDot";
 
@@ -40,47 +44,41 @@ function versionAtLeast(v: string | null | undefined, min: number[]): boolean {
   return true;
 }
 
-/** 软件分类的展示顺序与中文名 */
-const SOFTWARE_ORDER: SoftwareCategory[] = [
-  "database",
-  "container",
-  "webServer",
-  "language",
-  "devTool",
-  "common",
-];
-
-const SOFTWARE_TITLE: Record<SoftwareCategory, string> = {
-  database: "数据库",
-  container: "容器与虚拟化",
-  webServer: "Web 服务",
-  language: "开发语言",
-  devTool: "开发工具",
-  common: "常用软件",
-};
+/** 软件分类的展示顺序与中文名统一放在 format.ts（报告也要用同一份） */
+const SOFTWARE_ORDER: SoftwareCategory[] = SOFTWARE_CATEGORY_ORDER;
 
 interface SoftwareGroup {
-  key: SoftwareCategory;
+  key: string;
   title: string;
   items: SoftwareItem[];
 }
 
+/**
+ * 按分类分组。
+ * 采集器将来加了新枚举（或拼错）时，这些条目不能被静默丢弃——
+ * 未知分类统一追加到「其他」分组，卡头计数才和总数对得上。
+ */
 function buildSoftwareGroups(scan: ScanResult): SoftwareGroup[] {
-  const list = scan.runtime.software ?? [];
-  return SOFTWARE_ORDER.map((category) => ({
+  const list = scan.runtime?.software ?? [];
+  const groups: SoftwareGroup[] = SOFTWARE_ORDER.map((category) => ({
     key: category,
-    title: SOFTWARE_TITLE[category],
+    title: softwareCategoryLabel(category),
     items: list.filter((s) => s.category === category),
   })).filter((g) => g.items.length > 0);
+  const other = list.filter((s) => !SOFTWARE_ORDER.includes(s.category));
+  if (other.length) {
+    groups.push({ key: "other", title: softwareCategoryLabel(undefined), items: other });
+  }
+  return groups;
 }
 
 /** 一句手写体：这台机器适合跑什么 */
 function fitSentence(scan: ScanResult): string {
-  const memGB = scan.memory.totalBytes / 1024 ** 3;
-  const hasDiscrete = scan.gpus.some((g) => g.discrete === true);
-  const rt = scan.runtime;
-  const hasFw = rt.dotnetFramework.some((d) => d.installed);
-  const hasWebview = rt.webview2.installed === true;
+  const memGB = (scan.memory?.totalBytes ?? 0) / 1024 ** 3;
+  const hasDiscrete = (scan.gpus ?? []).some((g) => g.discrete === true);
+  const rt = scan.runtime ?? ({} as ScanResult["runtime"]);
+  const hasFw = (rt.dotnetFramework ?? []).some((d) => d.installed);
+  const hasWebview = rt.webview2?.installed === true;
   const hasDev = Boolean(rt.node || rt.python || rt.git);
   const software = rt.software ?? [];
   const hasDb = software.some((s) => s.category === "database");
@@ -100,11 +98,19 @@ function fitSentence(scan: ScanResult): string {
 }
 
 function buildGroups(scan: ScanResult): EnvGroup[] {
-  const rt = scan.runtime;
+  /* 顶层块与子数组一律兜底：删掉任意 section 都不该整页崩 */
+  const rt = scan.runtime ?? ({} as ScanResult["runtime"]);
+  const fwList = rt.dotnetFramework ?? [];
+  const dotnetRuntimes = rt.dotnetRuntimes ?? [];
+  const vcppList = rt.vcpp ?? [];
+  const javaList = rt.java ?? [];
+  const directx = rt.directx ?? ({} as ScanResult["runtime"]["directx"]);
+  const webview2 = rt.webview2 ?? ({} as ScanResult["runtime"]["webview2"]);
+  const wslInfo = rt.wsl ?? ({} as ScanResult["runtime"]["wsl"]);
   const groups: EnvGroup[] = [];
 
   /* .NET Framework */
-  const fw = rt.dotnetFramework.filter((d) => d.installed);
+  const fw = fwList.filter((d) => d.installed);
   const fwLatest = fw.reduce<string>((best, d) => (versionAtLeast(d.version, best.split(".").map(Number)) ? d.version : best), "0");
   const fwStatus: CheckStatus = fw.length === 0 ? "fail" : versionAtLeast(fwLatest, [4, 8]) ? "pass" : "warn";
   groups.push({
@@ -132,10 +138,10 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   groups.push({
     key: "dotnet",
     title: ".NET 运行时",
-    summary: rt.dotnetRuntimes.length ? `${rt.dotnetRuntimes.length} 个运行时` : "未检测到",
-    status: rt.dotnetRuntimes.length ? "pass" : "unknown",
-    rows: rt.dotnetRuntimes.length
-      ? rt.dotnetRuntimes.map((d) => ({
+    summary: dotnetRuntimes.length ? `${dotnetRuntimes.length} 个运行时` : "未检测到",
+    status: dotnetRuntimes.length ? "pass" : "unknown",
+    rows: dotnetRuntimes.length
+      ? dotnetRuntimes.map((d) => ({
           name: d.name,
           version: d.version,
           path: "dotnet runtime",
@@ -148,10 +154,10 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   groups.push({
     key: "vcpp",
     title: "VC++ 运行库",
-    summary: rt.vcpp.length ? `${rt.vcpp.length} 个版本` : "缺失",
-    status: rt.vcpp.length ? "pass" : "fail",
-    rows: rt.vcpp.length
-      ? rt.vcpp.map((v) => ({
+    summary: vcppList.length ? `${vcppList.length} 个版本` : "缺失",
+    status: vcppList.length ? "pass" : "fail",
+    rows: vcppList.length
+      ? vcppList.map((v) => ({
           name: `Visual C++ ${v.year}`,
           version: v.version,
           path: v.arch,
@@ -161,7 +167,7 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   });
 
   /* DirectX */
-  const dx = rt.directx;
+  const dx = directx;
   const dxStatus: CheckStatus =
     dx.d3d12 == null && dx.major == null
       ? "unknown"
@@ -179,16 +185,22 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
       {
         name: "DirectX 运行库",
         version: dx.version,
-        path: [dx.d3d12 ? "D3D12 可用" : null, dx.wddm ? `WDDM ${dx.wddm}` : null]
-          .filter(Boolean)
-          .join(" · ") || "未提供",
+        path:
+          [
+            dx.d3d12 ? "D3D12 可用" : null,
+            dx.wddm ? `WDDM ${dx.wddm}` : null,
+            /* featureLevel 采集器已采到，之前没展示 */
+            dx.featureLevel ? `特性级别 ${dx.featureLevel}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || "未提供",
         status: dxStatus,
       },
     ],
   });
 
   /* WebView2 */
-  const wv = rt.webview2;
+  const wv = webview2;
   const wvStatus: CheckStatus =
     wv.installed == null ? "unknown" : wv.installed ? "pass" : "fail";
   groups.push({
@@ -210,10 +222,10 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   groups.push({
     key: "java",
     title: "Java 运行时",
-    summary: rt.java.length ? `${rt.java.length} 个` : "未检测到",
-    status: rt.java.length ? "pass" : "unknown",
-    rows: rt.java.length
-      ? rt.java.map((j) => ({
+    summary: javaList.length ? `${javaList.length} 个` : "未检测到",
+    status: javaList.length ? "pass" : "unknown",
+    rows: javaList.length
+      ? javaList.map((j) => ({
           name: j.name,
           version: j.version,
           path: j.path,
@@ -237,19 +249,20 @@ function buildGroups(scan: ScanResult): EnvGroup[] {
   groups.push(single("git", "Git", rt.git));
 
   /* WSL */
-  const wsl = rt.wsl;
+  const wsl = wslInfo;
+  const wslDistros = wsl.distros ?? [];
   const wslStatus: CheckStatus =
     wsl.installed == null ? "unknown" : wsl.installed ? "pass" : "unknown";
   groups.push({
     key: "wsl",
     title: "WSL",
-    summary: wslStatus === "pass" ? `${wsl.distros.length} 个发行版` : "未安装",
+    summary: wslStatus === "pass" ? `${wslDistros.length} 个发行版` : "未安装",
     status: wslStatus,
     rows: [
       {
         name: "Windows Subsystem for Linux",
         version: wsl.version,
-        path: wsl.distros.length ? wsl.distros.join(" / ") : "未安装发行版",
+        path: wslDistros.length ? wslDistros.join(" / ") : "未安装发行版",
         status: wslStatus,
       },
     ],
@@ -265,11 +278,14 @@ function cleanPath(v: string | null | undefined): string {
 }
 
 export function Runtime({ scan, baseIndex = 0 }: { scan: ScanResult; baseIndex?: number }) {
+  const rt = scan.runtime ?? ({} as ScanResult["runtime"]);
   const groups = buildGroups(scan);
   const installedCount = groups.filter((g) => g.status === "pass").length;
-  const software = scan.runtime.software ?? [];
+  const software = rt.software ?? [];
   const softwareGroups = buildSoftwareGroups(scan);
   const runningCount = software.filter((s) => s.running === true).length;
+  /* 分组只收已识别的分类，若总数对不上说明有条目落进了「其他」——卡头要能解释清楚 */
+  const groupedCount = softwareGroups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <div>
@@ -298,7 +314,11 @@ export function Runtime({ scan, baseIndex = 0 }: { scan: ScanResult; baseIndex?:
         icon={Boxes}
         extra={
           <span className="tiny">
-            {software.length > 0 ? `${software.length} 个` : "未检测到"}
+            {software.length > 0
+              ? groupedCount === software.length
+                ? `${software.length} 个`
+                : `已识别 ${groupedCount} / 共 ${software.length} 个`
+              : "未检测到"}
           </span>
         }
         className="software-card"
@@ -348,7 +368,14 @@ export function Runtime({ scan, baseIndex = 0 }: { scan: ScanResult; baseIndex?:
                       )}
                       <span
                         className="software-row__path"
-                        title={cleanPath(item.path) || item.detail?.trim() || undefined}
+                        title={
+                          [
+                            item.source ? `来源：${item.source}` : null,
+                            cleanPath(item.path) || item.detail?.trim() || null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ") || undefined
+                        }
                       >
                         {cleanPath(item.path) || item.detail?.trim() || ""}
                       </span>

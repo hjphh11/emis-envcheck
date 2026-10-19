@@ -36,5 +36,12 @@ dev/*scan*.json
 !dev/sample-scan.json
 dev/tabs/
 
+# 字体源文件（scripts/subset-fonts.py 的输入，每套 1–6MB，不入库）
+# 需要时从 @fontsource 或官方渠道重新获取，子集化产物在 src/assets/fonts/
+scripts/fonts-src/
+
+# 并行会话 / 其他工具的工作目录（不属于本项目代码）
+.workbuddy/
+
 # 需要 gh token 的 workflow scope 才能推送（本机 token 没有）
 .github/workflows/build.yml

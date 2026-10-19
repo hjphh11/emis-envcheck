@@ -3,8 +3,8 @@ import { animate, useReducedMotion } from "motion/react";
 import { clampPct } from "../../lib/format";
 
 export interface GaugeProps {
-  /** 0–100 */
-  value: number;
+  /** 0–100；null 表示没有采到分数（显示 --，不画环） */
+  value: number | null | undefined;
   /** 环内小字，默认「综合评分」 */
   unit?: string;
   /** 环的粗细（viewBox 单位） */
@@ -20,7 +20,9 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
   const raw = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const gradientId = `gauge-grad-${raw}`;
   const reduced = useReducedMotion();
-  const target = clampPct(value);
+  /* 没有分数时不能画成 0 分环——那是把「没采到」显示成「0 分」 */
+  const known = value != null && Number.isFinite(value);
+  const target = known ? clampPct(value) : 0;
   const [shown, setShown] = useState(reduced ? target : 0);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
   const display = clampPct(shown);
   const r = 84;
   const c = 2 * Math.PI * r;
-  const offset = c * (1 - display / 100);
+  const offset = known ? c * (1 - display / 100) : c;
 
   return (
     <div className="gauge">
@@ -50,7 +52,7 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
         className="gauge__svg"
         viewBox="0 0 200 200"
         role="img"
-        aria-label={`综合评分 ${Math.round(target)} 分`}
+        aria-label={known ? `综合评分 ${Math.round(target)} 分` : "综合评分未知"}
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
@@ -80,21 +82,23 @@ export function Gauge({ value, unit = "综合评分", thickness = 13 }: GaugePro
           strokeWidth={thickness}
         />
         {/* 进度（由弹簧值直接驱动，不再走 CSS transition） */}
-        <circle
-          cx="100"
-          cy="100"
-          r={r}
-          fill="none"
-          stroke={`url(#${gradientId})`}
-          strokeWidth={thickness}
-          strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={offset}
-          transform="rotate(-90 100 100)"
-        />
+        {known && (
+          <circle
+            cx="100"
+            cy="100"
+            r={r}
+            fill="none"
+            stroke={`url(#${gradientId})`}
+            strokeWidth={thickness}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={offset}
+            transform="rotate(-90 100 100)"
+          />
+        )}
       </svg>
       <div className="gauge__center">
-        <div className="gauge__value">{Math.round(display)}</div>
+        <div className="gauge__value">{known ? Math.round(display) : "--"}</div>
         <div className="gauge__unit">{unit}</div>
       </div>
     </div>

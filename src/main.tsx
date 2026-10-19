@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 // 由 ./styles/fonts.css 里的 @font-face 引入（约 530KB）。
 import "./styles/app.css";
 import App from "./App";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 /* 用内联 SVG 定一个品牌色 favicon：浏览器预览时不会再 404 请求 /favicon.ico */
 const brandIcon =
@@ -17,8 +18,11 @@ link.type = "image/svg+xml";
 link.href = brandIcon;
 document.head.appendChild(link);
 
+/* 顶层兜底：任何未捕获的渲染异常都不该变成一整窗白屏（用户连重扫都点不到） */
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary scope="应用" reloadOnReset>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>,
 );

@@ -1,10 +1,16 @@
 fn main() {
     // 把编译日期注入成环境变量，供 `app_info().buildDate` 使用。
-    // 只取 UTC 日期（YYYY-MM-DD），不引 chrono，避免给 build.rs 加依赖。
+    // 不引 chrono（build.rs 不值得为一行日期加依赖），手算公历日期。
+    //
+    // 为什么加 8 小时：SystemTime 是 UTC，直接按天取整会让东八区在
+    // 00:00–08:00 之间构建出来的日期比本地「昨天」还早一天，
+    // About 面板就会显示错误的构建日期。这里固定按 UTC+8（本项目只面向中文用户）。
+    const UTC8_OFFSET_SECS: u64 = 8 * 3600;
     let secs = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs())
-        .unwrap_or(0);
+        .unwrap_or(0)
+        + UTC8_OFFSET_SECS;
     let days = (secs / 86_400) as i64;
     let (y, m, d) = civil_from_days(days);
     println!("cargo:rustc-env=BUILD_DATE={y:04}-{m:02}-{d:02}");

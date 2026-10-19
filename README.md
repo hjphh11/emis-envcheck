@@ -80,7 +80,7 @@ DirectX（版本 / d3d12 / 特性级别）、WebView2、Java（JDK / JRE）、No
 
 ## Windows 11 兼容性检测项（17 项）
 
-64 位处理器 · CPU 型号在支持列表 · 物理核心数 · 主频 · 内存容量 · 系统盘可用空间 ·
+64 位处理器 · CPU 型号在支持列表 · 物理核心数 · 主频 · 内存容量 · 系统盘容量（与可用空间）·
 UEFI 固件 · 安全启动 · TPM 2.0 · DirectX 12 · WDDM 2.0 · 显示设备规格 ·
 SSE4.2 / POPCNT 指令集 · 分区表 GPT · 操作系统版本 · **显卡驱动已安装（WDDM ≥ 2.0）** · **显卡驱动时效（< 18 个月）**
 
@@ -132,7 +132,7 @@ hjjc/
 ├─ src-tauri/
 │  ├─ src/                    Rust：scan_all / live_snapshot / 提权 / 写文件
 │  └─ scripts/scan.ps1        PowerShell 采集器（2900+ 行，核心）
-├─ dev/                       采集器工具链：texts.json / gen-texts / verify（863 项契约校验）
+├─ dev/                       采集器工具链：texts.json / gen-texts / verify（860+ 项契约校验）
 ├─ docs/                      数据契约 / 检测项清单 / 参考调研 / 构建打包 / 截图
 ├─ scripts/
 │  ├─ build-portable.ps1      一键出绿色版本 + zip + SHA256

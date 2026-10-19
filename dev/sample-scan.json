@@ -1,7 +1,7 @@
 {
     "meta":  {
-                 "scanMs":  7447,
-                 "generatedAt":  "2026-10-19T15:48:59+08:00",
+                 "scanMs":  5598,
+                 "generatedAt":  "2026-10-19T19:31:32+08:00",
                  "isAdmin":  false,
                  "elevationGains":  [
                                         "CPU / 主板温度与风扇转速（需管理员权限与传感器驱动）",
@@ -19,7 +19,7 @@
                                   "MSFT_StorageReliabilityCounter 不可用，硬盘温度 / 通电时间 / 磨损度为 null",
                                   "WSL 已安装，但无法列出已安装发行版：exit -1"
                               ],
-                 "collectorVersion":  "1.1.0"
+                 "collectorVersion":  "1.2.0"
              },
     "system":  {
                    "caption":  "Windows 11 专业工作站版",
@@ -31,13 +31,13 @@
                    "arch":  "x64",
                    "installDate":  "2025-09-03T14:03:50+08:00",
                    "lastBoot":  "2026-10-19T08:46:30+08:00",
-                   "uptimeSec":  25345,
+                   "uptimeSec":  38699,
                    "activation":  "已激活",
                    "activationType":  "Retail",
                    "powerPlan":  "Intel大核优先低延迟-钛极工具箱专属",
                    "fastStartup":  false,
                    "bitLocker":  null,
-                   "hyperV":  true,
+                   "hyperV":  false,
                    "manufacturer":  "Acer",
                    "model":  "SH16-72",
                    "serial":  "M3NRKD01X000000",
@@ -85,13 +85,13 @@
                                      "POPCNT"
                                  ],
                 "arch":  "x64",
-                "usagePct":  10
+                "usagePct":  7
             },
     "memory":  {
                    "totalBytes":  16895483904,
-                   "availableBytes":  4450947072,
-                   "usedBytes":  12444536832,
-                   "usedPct":  73.7,
+                   "availableBytes":  4286640128,
+                   "usedBytes":  12608843776,
+                   "usedPct":  74.6,
                    "modules":  [
                                    {
                                        "slot":  "Controller1-ChannelA-DIMM0",
@@ -141,7 +141,7 @@
                   {
                       "model":  "ZETTASTONE CP300Y 1024GB",
                       "vendor":  null,
-                      "serial":  "S6B0NL0T412345.",
+                      "serial":  "S6B0NL0T412345",
                       "firmware":  "BXCBGC26",
                       "interfaceType":  "NVMe",
                       "mediaType":  "SSD",
@@ -157,14 +157,14 @@
                                           "label":  "Acer",
                                           "fs":  "NTFS",
                                           "totalBytes":  322125688832,
-                                          "freeBytes":  70003994624
+                                          "freeBytes":  49566691328
                                       },
                                       {
                                           "drive":  "D:",
                                           "label":  "Data",
                                           "fs":  "NTFS",
                                           "totalBytes":  700455055360,
-                                          "freeBytes":  158002417664
+                                          "freeBytes":  153889501184
                                       }
                                   ]
                   }
@@ -191,19 +191,34 @@
                                          "type":  "WLAN",
                                          "mac":  "A0-36-BC-44-55-66",
                                          "ipv4":  "192.168.1.24",
-                                         "ipv6":  "fe80::1dd4:1c67:4aad:6458",
+                                         "ipv6":  "fe80::1c2d:3e4f:5566:7788",
                                          "gateway":  "192.168.1.1",
                                          "dns":  [
                                                      "192.168.1.1"
                                                  ],
-                                         "speedMbps":  1168,
+                                         "speedMbps":  886,
                                          "connected":  true,
                                          "ssid":  "QINGWU-5G",
-                                         "signalPct":  97
+                                         "signalPct":  90
+                                     },
+                                     {
+                                         "name":  "Remote NDIS based Internet Sharing Device #2",
+                                         "type":  "以太网",
+                                         "mac":  "A0-36-BC-11-22-33",
+                                         "ipv4":  "192.168.1.24",
+                                         "ipv6":  "fe80::1c2d:3e4f:5566:7788",
+                                         "gateway":  "192.168.1.1",
+                                         "dns":  [
+
+                                                 ],
+                                         "speedMbps":  426,
+                                         "connected":  true,
+                                         "ssid":  null,
+                                         "signalPct":  null
                                      }
                                  ],
                     "internet":  true,
-                    "latencyMs":  44,
+                    "latencyMs":  37,
                     "dnsOk":  true
                 },
     "runtime":  {
@@ -338,7 +353,7 @@
                                  },
                                  {
                                      "name":  "Java",
-                                     "version":  null,
+                                     "version":  "21.0.9",
                                      "path":  "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.exe",
                                      "source":  "path"
                                  }
@@ -378,15 +393,6 @@
                                          "source":  "registry",
                                          "running":  true,
                                          "detail":  "6379 端口"
-                                     },
-                                     {
-                                         "name":  "SQLite",
-                                         "version":  null,
-                                         "path":  "C:\\windows\\System32\\winsqlite3.dll",
-                                         "category":  "database",
-                                         "source":  "dir",
-                                         "running":  null,
-                                         "detail":  "系统自带 SQLite 数据库"
                                      },
                                      {
                                          "name":  "Docker Desktop",
@@ -466,7 +472,7 @@
                                          "path":  "D:\\Microsoft VS Code\\bin\\code.cmd",
                                          "category":  "devTool",
                                          "source":  "registry",
-                                         "running":  true,
+                                         "running":  null,
                                          "detail":  null
                                      },
                                      {
@@ -598,12 +604,12 @@
                                  },
                                  {
                                      "id":  "c.disk.space",
-                                     "name":  "系统盘可用空间",
+                                     "name":  "系统盘容量与可用空间",
                                      "status":  "pass",
-                                     "actual":  "65.2 GB 可用 / 300 GB 总容量",
-                                     "requirement":  "至少 64 GB 可用空间",
+                                     "actual":  "46.2 GB 可用 / 300 GB 总容量",
+                                     "requirement":  "设备容量 ≥ 64 GB（建议保留 20 GB 以上可用空间）",
                                      "reason":  null,
-                                     "detail":  "满足 Windows 11 安装与更新所需空间"
+                                     "detail":  "容量满足 Windows 11 安装要求"
                                  },
                                  {
                                      "id":  "c.fw.uefi",
@@ -707,7 +713,7 @@
                              ]
                },
     "score":  {
-                  "total":  94,
+                  "total":  93,
                   "level":  "excellent",
                   "parts":  [
                                 {
@@ -722,14 +728,14 @@
                                     "label":  "内存",
                                     "score":  90,
                                     "weight":  0.2,
-                                    "note":  "15.7 GB DDR5 · 已用 73.7% · 单通道"
+                                    "note":  "15.7 GB DDR5 · 已用 74.6% · 单通道"
                                 },
                                 {
                                     "key":  "storage",
                                     "label":  "存储",
                                     "score":  97,
                                     "weight":  0.25,
-                                    "note":  "NVMe · 状态 健康 · 系统盘剩余 22%"
+                                    "note":  "NVMe · 状态 健康 · 系统盘剩余 15%"
                                 },
                                 {
                                     "key":  "gpu",
@@ -741,9 +747,9 @@
                                 {
                                     "key":  "system",
                                     "label":  "系统状态",
-                                    "score":  100,
+                                    "score":  94,
                                     "weight":  0.15,
-                                    "note":  "激活 已激活 · 安全启动 已开启 · 系统盘剩余 65.2 GB · 已运行 7 小时"
+                                    "note":  "激活 已激活 · 安全启动 已开启 · 系统盘剩余 46.2 GB · 已运行 11 小时"
                                 }
                             ]
               }

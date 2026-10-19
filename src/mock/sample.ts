@@ -303,7 +303,7 @@ export function mockLive(): LiveSnapshot {
 
 export const mockAppInfo: AppInfo = {
   name: "爱弥斯 · 环境检测",
-  version: "1.2.0",
+  version: "1.3.0",
   author: "清吾",
   homepage: "https://qingwu.ink",
   buildDate: new Date().toISOString(),

@@ -1,13 +1,13 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "主窗口能力：自定义标题栏（无边框）、保存对话框、剪贴板、opener",
+  "description": "主窗口能力：自定义标题栏（无边框）、保存对话框、剪贴板写入、打开外链",
   "windows": ["main"],
   "permissions": [
     "core:default",
     "opener:default",
-    "dialog:default",
-    "clipboard-manager:default",
+    "dialog:allow-save",
+    "clipboard-manager:allow-write-text",
     "core:window:allow-minimize",
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",

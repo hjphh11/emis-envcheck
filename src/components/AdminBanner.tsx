@@ -40,7 +40,7 @@ function shortGain(raw: string): string {
 
 /**
  * 普通权限下的提示条：
- * 主句固定一句短的，提权收益收成小 chip（最多 4 个 + N），全文放 title。
+ * 主句按「真实 gains」生成，提权收益收成小 chip（最多 4 个 + N），全文放 title。
  * 整体锁一行，绝不随 elevationGains 的长度变形。
  */
 export function AdminBanner({ gains, busy, onElevate }: AdminBannerProps) {
@@ -53,13 +53,18 @@ export function AdminBanner({ gains, busy, onElevate }: AdminBannerProps) {
   const rest = chips.length - shown.length;
   const fullText = gains.map((g) => `· ${g}`).join("\n");
 
+  /* 主句只承诺真实存在的收益：gains 为空时不能硬说「温度与 SMART 不可用」 */
+  const claim = shown.length
+    ? `${shown.join(" / ")}${rest > 0 ? ` 等 ${chips.length} 项明细` : "明细"}不可用`
+    : "部分硬件明细可能不完整";
+
   return (
     <div className="notice" role="status">
       <span className="notice__icon" aria-hidden="true">
         <ShieldAlert size={15} strokeWidth={2} />
       </span>
-      <span className="notice__text">
-        <strong>未以管理员运行</strong> · 温度与 SMART 明细不可用
+      <span className="notice__text" title={fullText || undefined}>
+        <strong>未以管理员运行</strong> · {claim}
       </span>
       {shown.length > 0 && (
         <span className="notice__gains" title={fullText}>
@@ -82,7 +87,11 @@ export function AdminBanner({ gains, busy, onElevate }: AdminBannerProps) {
         icon={ShieldCheck}
         onClick={onElevate}
         disabled={busy}
-        title="以管理员身份重启程序，重新采集温度与 SMART 明细"
+        title={
+          shown.length
+            ? `以管理员身份重启程序，重新采集${shown.join(" / ")}等明细`
+            : "以管理员身份重启程序，重新采集"
+        }
       >
         {busy ? "重启中…" : "以管理员重启"}
       </Button>

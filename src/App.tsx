@@ -5,6 +5,7 @@ import {
   Boxes,
   CircleAlert,
   HeartPulse,
+  Info,
   ShieldCheck,
 } from "lucide-react";
 import type { AppInfo, ScanResult } from "./types";
@@ -23,10 +24,12 @@ import type { ExportKind } from "./components/Toolbar";
 import { AdminBanner } from "./components/AdminBanner";
 import { Skeleton } from "./components/Skeleton";
 import { ErrorCard } from "./components/ErrorCard";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Footer } from "./components/Footer";
 import { AboutModal } from "./components/AboutModal";
 import { ToastHost } from "./components/ui/Toast";
 import type { ToastData } from "./components/ui/Toast";
+import { Button } from "./components/ui/Button";
 import { silhouetteUrl } from "./components/ui/emis";
 import { Dashboard } from "./components/pages/Dashboard";
 import { Runtime } from "./components/pages/Runtime";
@@ -73,23 +76,40 @@ export default function App() {
   const [toast, setToast] = useState<ToastData | null>(null);
   const [elevating, setElevating] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [warnOpen, setWarnOpen] = useState(false);
   const initialized = useRef(false);
+  /* 重入保护：Ctrl+R 连按 / ErrorCard 重试 / 工具条按钮可能并发触发扫描 */
+  const inFlight = useRef(false);
+  /* 只接受最新一次请求的结果：旧请求晚到不能覆盖新结果 */
+  const reqId = useRef(0);
+  /* Toast id 自增：Date.now() 同毫秒会撞 key，导致动画/关闭互相干扰 */
+  const toastSeq = useRef(0);
 
   const notify = useCallback((message: string, tone: "ok" | "err" = "ok") => {
-    setToast({ id: Date.now(), message, tone });
+    toastSeq.current += 1;
+    setToast({ id: toastSeq.current, message, tone });
   }, []);
 
   const runScan = useCallback(async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    const myReq = reqId.current + 1;
+    reqId.current = myReq;
     setScanning(true);
     setError(null);
     try {
       const result = await scanAll();
-      setScan(result);
+      if (myReq === reqId.current) setScan(result);
     } catch (err) {
-      setError(errText(err) || "采集器没有返回有效数据");
+      if (myReq === reqId.current) {
+        setError(errText(err) || "采集器没有返回有效数据");
+      }
     } finally {
-      setScanning(false);
-      setLoading(false);
+      inFlight.current = false;
+      if (myReq === reqId.current) {
+        setScanning(false);
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -150,6 +170,10 @@ export default function App() {
         notify("还没有可导出的扫描结果", "err");
         return;
       }
+      /* 扫描中导出的是上一轮结果，必须说清楚，否则用户会以为导出的是刚采的 */
+      if (inFlight.current) {
+        notify("正在重新扫描，本次导出的是上一次的结果");
+      }
       try {
         const content =
           kind === "html" ? buildHtmlReport(scan, info) : buildJsonReport(scan);
@@ -187,9 +211,11 @@ export default function App() {
   const closeAbout = useCallback(() => setAboutOpen(false), []);
 
   /* —— 全局快捷键：Ctrl+R 重扫 / Ctrl+E 导出 HTML / Ctrl+1..4 切页签 ——
-     输入框内不抢按键；浏览器预览里这些组合也会被 preventDefault。 */
+     输入框内不抢按键；浏览器预览里这些组合也会被 preventDefault。
+     关于面板打开时整体让路：Esc 与 Tab 由 Modal 自己处理，快捷键不能穿透到背景。 */
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (aboutOpen) return;
       if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
       const target = e.target as HTMLElement | null;
       const tag = target?.tagName ?? "";
@@ -211,12 +237,16 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [runScan, handleExport, changeTab]);
+  }, [runScan, handleExport, changeTab, aboutOpen]);
 
   const showSkeleton = loading && !scan;
   const isAdmin = scan ? scan.meta.isAdmin !== false : true;
   /* 版本号以 app_info()（读 Cargo.toml）为准；浏览器预览 / 调用失败时回落到发布版本 */
-  const version = info?.version || "1.2.0";
+  const version = info?.version || "1.3.0";
+  /* 采集说明：采集器写的「哪一项为什么没采到」，之前全链路没有出口 */
+  const warnings = (scan?.meta.warnings ?? []).filter(
+    (w): w is string => typeof w === "string" && w.trim().length > 0,
+  );
 
   return (
     <div className="app">
@@ -248,10 +278,51 @@ export default function App() {
           />
         )}
 
+        {/* 采集说明：管理员提示之外的另一层「为什么是未知」，可折叠、不抢视线 */}
+        {warnings.length > 0 && (
+          <div className="notice notice--info">
+            <span className="notice__icon" aria-hidden="true">
+              <Info size={15} strokeWidth={2} />
+            </span>
+            <span className="notice__text">
+              <strong>采集说明 {warnings.length} 条</strong> · 部分项目本次没采到，
+              报告里的「未知」不代表机器没有
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setWarnOpen((v) => !v)}
+              aria-expanded={warnOpen}
+              title="展开 / 收起采集说明"
+            >
+              {warnOpen ? "收起" : "查看"}
+            </Button>
+          </div>
+        )}
+        {warnings.length > 0 && warnOpen && (
+          <ul className="notice-list" aria-label="采集说明">
+            {warnings.map((w, i) => (
+              <li key={`${i}-${w}`}>{w}</li>
+            ))}
+          </ul>
+        )}
+
         {error && scan && (
           <div className="error-inline" role="alert">
             <CircleAlert size={14} strokeWidth={2} aria-hidden="true" />
             <span>重新扫描没有完成：{error}（下面仍是上一次的结果）</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => void runScan()}
+              disabled={scanning}
+            >
+              {scanning ? "重试中…" : "重试"}
+            </Button>
+            <details className="error-inline__detail">
+              <summary>详情</summary>
+              <pre>{error}</pre>
+            </details>
           </div>
         )}
 
@@ -279,12 +350,18 @@ export default function App() {
                     : { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
                 }
               >
-                {tab === "dashboard" && (
-                  <Dashboard scan={scan} notify={notify} />
-                )}
-                {tab === "runtime" && <Runtime scan={scan} baseIndex={0} />}
-                {tab === "compat" && <Compat scan={scan} baseIndex={0} />}
-                {tab === "monitor" && <Monitor baseIndex={0} />}
+                {/* 页签级兜底：单页崩了只替换内容区，标题栏 / 页签栏 / 页脚仍可操作 */}
+                <ErrorBoundary
+                  key={tab}
+                  scope={`「${TABS.find((t) => t.key === tab)?.label ?? tab}」页`}
+                >
+                  {tab === "dashboard" && (
+                    <Dashboard scan={scan} notify={notify} />
+                  )}
+                  {tab === "runtime" && <Runtime scan={scan} baseIndex={0} />}
+                  {tab === "compat" && <Compat scan={scan} baseIndex={0} />}
+                  {tab === "monitor" && <Monitor baseIndex={0} />}
+                </ErrorBoundary>
               </motion.div>
             </AnimatePresence>
           </div>

@@ -41,7 +41,7 @@ export async function appInfo(): Promise<AppInfo> {
   if (!hasBackend) {
     return {
       name: "爱弥斯 · 环境检测",
-      version: "1.2.0",
+      version: "1.3.0",
       author: "清吾",
       homepage: "https://qingwu.ink",
       buildDate: new Date().toISOString(),
@@ -57,12 +57,6 @@ export async function relaunchElevated(): Promise<void> {
     return;
   }
   return invokeCmd<void>("relaunch_elevated");
-}
-
-/** 用系统默认程序打开文件或文件夹 */
-export async function openPath(path: string): Promise<void> {
-  if (!hasBackend) return;
-  await invokeCmd<void>("open_path", { path });
 }
 
 /** 打开外部链接 */
@@ -105,7 +99,8 @@ export async function saveTextFile(opts: SaveOptions): Promise<string | null> {
     a.href = url;
     a.download = defaultName;
     a.click();
-    URL.revokeObjectURL(url);
+    /* 立即 revoke 会让部分浏览器来不及取数据（下载变成 0 字节），延后一拍再释放 */
+    window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
     return defaultName;
   }
 

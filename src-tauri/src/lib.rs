@@ -25,8 +25,6 @@ pub fn run() {
             commands::app_info,
             commands::relaunch_elevated,
             commands::write_text_file,
-            commands::open_path,
-            commands::open_url,
         ])
         .run(tauri::generate_context!())
         .expect("启动 爱弥斯 · 环境检测 失败");

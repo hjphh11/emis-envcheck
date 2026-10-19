@@ -80,6 +80,47 @@ $built = $candidates[0]
 Write-Host "找到产物：$($built.FullName)"
 Write-Host ("体积：{0:N2} MB" -f ($built.Length / 1MB))
 
+# ---------------------------------------------------------------- 3b. 新鲜度守卫
+# 为什么需要这段：-SkipBuild 只做「收集 + 打包」，完全不构建。
+# 如果改完源码（前端 dist / Rust 源码 / 内嵌的 scan.ps1）只跑 -SkipBuild，
+# 拿到的是上一次构建的旧 exe —— 改动会被静默丢弃，而且从体积上看不出任何异常。
+# 这里断言 exe 比所有输入都新，否则直接失败，逼用户去掉 -SkipBuild。
+$inputRoots = @(
+  (Join-Path $root 'dist'),
+  (Join-Path $root 'src'),
+  (Join-Path $root 'src-tauri\src'),
+  (Join-Path $root 'src-tauri\scripts'),
+  (Join-Path $root 'src-tauri\tauri.conf.json'),
+  (Join-Path $root 'src-tauri\Cargo.toml'),
+  (Join-Path $root 'package.json')
+)
+$newestInput = $null
+foreach ($item in $inputRoots) {
+  if (-not (Test-Path -LiteralPath $item)) { continue }
+  $files = if ((Get-Item -LiteralPath $item).PSIsContainer) {
+    Get-ChildItem -LiteralPath $item -Recurse -File -ErrorAction SilentlyContinue
+  } else {
+    Get-Item -LiteralPath $item
+  }
+  foreach ($f in $files) {
+    if ($null -eq $newestInput -or $f.LastWriteTime -gt $newestInput.LastWriteTime) {
+      $newestInput = $f
+    }
+  }
+}
+if ($null -ne $newestInput -and $built.LastWriteTime -lt $newestInput.LastWriteTime) {
+  $msg = @(
+    "产物比源码旧，拒绝打包：",
+    ("  exe     : {0}  ({1:yyyy-MM-dd HH:mm:ss})" -f $built.Name, $built.LastWriteTime),
+    ("  最新输入: {0}  ({1:yyyy-MM-dd HH:mm:ss})" -f $newestInput.FullName.Replace($root + '\', ''), $newestInput.LastWriteTime),
+    "请去掉 -SkipBuild 重新构建，否则会把旧代码打进去。"
+  ) -join "`n"
+  throw $msg
+}
+if ($SkipBuild) {
+  Write-Host "新鲜度检查通过（-SkipBuild：产物不早于任何源码）" -ForegroundColor DarkGray
+}
+
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 $finalExe = Join-Path $releaseDir $exeName
 Copy-Item $built.FullName $finalExe -Force
