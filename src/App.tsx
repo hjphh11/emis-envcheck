@@ -242,7 +242,7 @@ export default function App() {
   const showSkeleton = loading && !scan;
   const isAdmin = scan ? scan.meta.isAdmin !== false : true;
   /* 版本号以 app_info()（读 Cargo.toml）为准；浏览器预览 / 调用失败时回落到发布版本 */
-  const version = info?.version || "1.3.0";
+  const version = info?.version || "1.3.1";
   /* 采集说明：采集器写的「哪一项为什么没采到」，之前全链路没有出口 */
   const warnings = (scan?.meta.warnings ?? []).filter(
     (w): w is string => typeof w === "string" && w.trim().length > 0,

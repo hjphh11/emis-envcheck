@@ -43,6 +43,8 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
   const [history, setHistory] = useState<LiveSnapshot[]>([]);
   const [hidden, setHidden] = useState(() => document.hidden);
   const [error, setError] = useState<string | null>(null);
+  const [failCount, setFailCount] = useState(0);
+  const [retryTick, setRetryTick] = useState(0);
   const inFlight = useRef(false);
 
   /* 页面隐藏时暂停轮询；切回前台立即补一个样本 */
@@ -68,9 +70,11 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
           return next.length > MAX_POINTS ? next.slice(next.length - MAX_POINTS) : next;
         });
         setError(null);
+        setFailCount(0);
       } catch (err) {
         if (cancelled) return;
         setError(err instanceof Error ? err.message : String(err));
+        setFailCount((c) => c + 1);
       } finally {
         inFlight.current = false;
       }
@@ -83,7 +87,14 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
       cancelled = true;
       if (timer != null) window.clearInterval(timer);
     };
-  }, [hidden]);
+  }, [hidden, retryTick]);
+
+  /** 手动重试：重置定时器并立刻补一次采样（轮询失败时不必等下一轮） */
+  const retryNow = () => {
+    setError(null);
+    setFailCount(0);
+    setRetryTick((t) => t + 1);
+  };
 
   /* 离开页签时组件卸载 → 上面的 cleanup 会清掉定时器，不会泄漏 */
 
@@ -113,10 +124,16 @@ export function Monitor({ baseIndex = 0 }: { baseIndex?: number }) {
         </span>
         <span>每秒采样一次 · 保留最近 {MAX_POINTS} 个点</span>
         {latest && <span>最后更新 {fmtClock(latest.ts)}</span>}
-        {error && (
-          <Tag tone="fail" title={error}>
-            采样失败
-          </Tag>
+        {failCount > 0 && (
+          <span className="mon-fail" role="alert">
+            <Tag tone="fail">采样失败 {failCount} 次</Tag>
+            <span className="mon-fail__msg" title={error ?? undefined}>
+              {error}
+            </span>
+            <button type="button" className="btn btn--sm" onClick={retryNow}>
+              重试
+            </button>
+          </span>
         )}
       </div>
 

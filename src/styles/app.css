@@ -2013,6 +2013,25 @@
     color: var(--color-ok-text);
     font-size: 11.5px;
   }
+  /* 采样失败：把「失败了几次 + 原因 + 重试」收在一行，不再只有一个 hover 才看得到的标签 */
+  .mon-fail {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 3px 10px 3px 4px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--color-fail) 8%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-fail) 24%, transparent);
+  }
+  .mon-fail__msg {
+    max-width: 34ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-fail-text);
+    font-size: 11.5px;
+  }
   .mon-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

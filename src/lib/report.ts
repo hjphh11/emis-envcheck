@@ -486,7 +486,7 @@ export function buildHtmlReport(scan: ScanResult, info: AppInfo | null): string 
 
   const generatedAt = fmtDateTime(meta.generatedAt);
   const appName = info?.name || "爱弥斯 · 环境检测";
-  const appVersion = info?.version || "1.3.0";
+  const appVersion = info?.version || "1.3.1";
   const scanSec = Number.isFinite(meta.scanMs)
     ? `${(meta.scanMs / 1000).toFixed(1)} 秒`
     : "未知";
