@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Check,
+  CircuitBoard,
   Copy,
   Cpu,
   Gauge as GaugeIcon,
@@ -8,10 +9,11 @@ import {
   MemoryStick,
   Monitor,
   Network,
+  ShieldCheck,
   Sparkles,
   Terminal,
 } from "lucide-react";
-import type { ScanResult } from "../../types";
+import type { MotherboardInfo, ScanResult, SecurityInfo } from "../../types";
 import { copyText } from "../../lib/api";
 import {
   fmtBytes,
@@ -47,6 +49,21 @@ function Empty({ children }: { children: string }) {
   );
 }
 
+/** 布尔三态 → 文案与语气：true / false / null 分别是「是 / 否 / 未知」 */
+function triState(
+  v: boolean | null | undefined,
+  on = "是",
+  off = "否",
+): { text: string; tone: "ok" | "fail" | "default" } {
+  if (v == null) return { text: "未知", tone: "default" };
+  return v ? { text: on, tone: "ok" } : { text: off, tone: "fail" };
+}
+
+/** 多段文本用空格拼接，全空时兜底「未知」 */
+function joinParts(parts: Array<string | null | undefined>): string {
+  return parts.filter(Boolean).join(" ").trim() || "未知";
+}
+
 /** 把关键配置拼成一行紧凑文本 */
 export function buildConfigCode(scan: ScanResult): string {
   const { cpu, memory, gpus, motherboard, system } = scan;
@@ -64,7 +81,7 @@ export function buildConfigCode(scan: ScanResult): string {
         gpu.vramBytes ? ` ${fmtBytes(gpu.vramBytes).replace(/\s+/g, "")}` : ""
       }`
     : "显卡未知";
-  const board = motherboard.model ?? motherboard.vendor ?? "主板未知";
+  const board = motherboard?.model ?? motherboard?.vendor ?? "主板未知";
   const os = `${system.caption}${system.displayVersion ? ` ${system.displayVersion}` : ""}${
     system.build ? `·${system.build}` : ""
   }`;
@@ -92,6 +109,13 @@ function legacyCopy(text: string): boolean {
 
 export function Dashboard({ scan, notify }: DashboardProps) {
   const { score, system, cpu, memory, gpus, displays, disks, network } = scan;
+  /* 老采集器 / 异常数据可能没有这两个块，统一兜底成空对象，界面只显示「未知」 */
+  const security: Partial<SecurityInfo> = scan.security ?? {};
+  const motherboard: Partial<MotherboardInfo> = scan.motherboard ?? {};
+  /* 三态统一在这里算一次：true→是/已开启、false→否/已关闭、null→未知 */
+  const defenderTri = triState(security.defenderRealtime, "已开启", "已关闭");
+  const secBootTri = triState(security.secureBoot);
+  const boardSecBootTri = triState(motherboard.secureBoot);
   const level = levelInfo(score.total);
   const [copied, setCopied] = useState(false);
   const configCode = buildConfigCode(scan);
@@ -568,10 +592,76 @@ export function Dashboard({ scan, notify }: DashboardProps) {
             ))
           )}
         </GlassCard>
+
+        {/* 安全：Defender / 第三方杀软 / 防火墙 / UAC / 安全启动 / TPM */}
+        <GlassCard index={8} title="安全" icon={ShieldCheck}>
+          <InfoGrid>
+            <InfoRow
+              k="实时保护"
+              v={defenderTri.text}
+              tone={defenderTri.tone}
+            />
+            <InfoRow
+              k="第三方杀软"
+              v={
+                (security.antivirus ?? []).length
+                  ? (security.antivirus ?? []).join("、")
+                  : "未检测到"
+              }
+              title={(security.antivirus ?? []).join("、") || undefined}
+            />
+            <InfoRow k="防火墙" v={text(security.firewall)} />
+            <InfoRow k="用户账户控制" v={text(security.uac)} />
+            <InfoRow
+              k="安全启动"
+              v={secBootTri.text}
+              tone={secBootTri.tone}
+            />
+            <InfoRow k="TPM" v={text(security.tpm)} />
+          </InfoGrid>
+        </GlassCard>
+
+        {/* 主板与固件：主板 / BIOS / 固件类型 / 安全启动 / TPM / 序列号 */}
+        <GlassCard index={9} title="主板与固件" icon={CircuitBoard}>
+          <InfoGrid>
+            <InfoRow
+              k="主板"
+              v={joinParts([motherboard.vendor, motherboard.model])}
+            />
+            <InfoRow k="版本" v={text(motherboard.version)} />
+            <InfoRow
+              k="BIOS"
+              v={joinParts([motherboard.biosVendor, motherboard.biosVersion])}
+            />
+            <InfoRow k="BIOS 日期" v={fmtDate(motherboard.biosDate)} />
+            <InfoRow k="固件" v={text(motherboard.firmwareMode)} />
+            <InfoRow
+              k="安全启动"
+              v={boardSecBootTri.text}
+              tone={boardSecBootTri.tone}
+            />
+            <InfoRow
+              k="TPM"
+              v={
+                motherboard.tpmVersion
+                  ? `${motherboard.tpmVersion}${motherboard.tpmEnabled ? "（已启用）" : "（已停用）"}`
+                  : "未知"
+              }
+              tone={
+                motherboard.tpmVersion
+                  ? motherboard.tpmEnabled
+                    ? "ok"
+                    : "warn"
+                  : "default"
+              }
+            />
+            <InfoRow k="整机序列号" v={text(motherboard.serial)} mono />
+          </InfoGrid>
+        </GlassCard>
       </div>
 
       {/* 配置码 */}
-      <GlassCard index={8} title="配置码" icon={Terminal} className="config-card">
+      <GlassCard index={10} title="配置码" icon={Terminal} className="config-card">
         <div className="config-line">
           <div
             className="config-code"

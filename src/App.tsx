@@ -104,7 +104,7 @@ export default function App() {
         if (alive) setInfo(v);
       })
       .catch(() => {
-        /* 版本号拿不到时页脚回落到 1.0.0 */
+        /* 版本号拿不到时页脚回落到 1.2.0（见下方 version 兜底） */
       });
     return () => {
       alive = false;
@@ -215,9 +215,8 @@ export default function App() {
 
   const showSkeleton = loading && !scan;
   const isAdmin = scan ? scan.meta.isAdmin !== false : true;
-  /* 采集器还没升到 1.1.0 之前，界面按发布版本显示；Rust 侧升版后自动跟随 */
-  const version =
-    info?.version && info.version !== "1.0.0" ? info.version : "1.1.0";
+  /* 版本号以 app_info()（读 Cargo.toml）为准；浏览器预览 / 调用失败时回落到发布版本 */
+  const version = info?.version || "1.2.0";
 
   return (
     <div className="app">

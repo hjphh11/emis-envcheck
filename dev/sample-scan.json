@@ -1,0 +1,750 @@
+{
+    "meta":  {
+                 "scanMs":  7447,
+                 "generatedAt":  "2026-10-19T15:48:59+08:00",
+                 "isAdmin":  false,
+                 "elevationGains":  [
+                                        "CPU / 主板温度与风扇转速（需管理员权限与传感器驱动）",
+                                        "硬盘 SMART 原始属性：温度、通电时间、通电次数、磨损度",
+                                        "TPM 2.0 详细状态（Get-Tpm / Win32_Tpm）",
+                                        "BitLocker 系统盘加密状态",
+                                        "安全启动状态校验（Confirm-SecureBootUEFI）"
+                                    ],
+                 "warnings":  [
+                                  "未以管理员身份运行：CPU / 主板温度与风扇转速不可用（需管理员权限与传感器驱动，绿色版默认不提供）",
+                                  "未以管理员身份运行：硬盘 SMART 原始明细（温度、通电时间、磨损、通电次数）不可用，健康度仅来自系统上报",
+                                  "未以管理员身份运行：TPM 详细状态（Get-Tpm / Win32_Tpm）不可读，已依据 ACPI 设备枚举推断版本",
+                                  "未以管理员身份运行：BitLocker 加密状态不可用",
+                                  "未以管理员身份运行：Confirm-SecureBootUEFI 不可用，已改用注册表读取安全启动状态",
+                                  "MSFT_StorageReliabilityCounter 不可用，硬盘温度 / 通电时间 / 磨损度为 null",
+                                  "WSL 已安装，但无法列出已安装发行版：exit -1"
+                              ],
+                 "collectorVersion":  "1.1.0"
+             },
+    "system":  {
+                   "caption":  "Windows 11 专业工作站版",
+                   "osName":  "Microsoft Windows 11 专业工作站版",
+                   "version":  "10.0.26100",
+                   "build":  "26100",
+                   "ubr":  "6899",
+                   "displayVersion":  "24H2",
+                   "arch":  "x64",
+                   "installDate":  "2025-09-03T14:03:50+08:00",
+                   "lastBoot":  "2026-10-19T08:46:30+08:00",
+                   "uptimeSec":  25345,
+                   "activation":  "已激活",
+                   "activationType":  "Retail",
+                   "powerPlan":  "Intel大核优先低延迟-钛极工具箱专属",
+                   "fastStartup":  false,
+                   "bitLocker":  null,
+                   "hyperV":  true,
+                   "manufacturer":  "Acer",
+                   "model":  "SH16-72",
+                   "serial":  "M3NRKD01X000000",
+                   "domain":  "WORKGROUP",
+                   "timeZone":  "China Standard Time",
+                   "hostname":  "EMIS-DESKTOP",
+                   "username":  "qingwu",
+                   "resolution":  "2560x1600",
+                   "refreshHz":  165
+               },
+    "motherboard":  {
+                        "vendor":  "Acer",
+                        "model":  "GM6PRXX",
+                        "version":  null,
+                        "serial":  null,
+                        "biosVendor":  "American Megatrends International, LLC.",
+                        "biosVersion":  "1.00",
+                        "biosDate":  "2024-11-15T08:00:00+08:00",
+                        "firmwareMode":  "UEFI",
+                        "secureBoot":  true,
+                        "tpmVersion":  "2.0",
+                        "tpmEnabled":  true
+                    },
+    "cpu":  {
+                "brand":  "Intel(R) Core(TM) i7-14650HX",
+                "vendor":  "Intel",
+                "physicalCores":  16,
+                "logicalCores":  24,
+                "baseMhz":  2200,
+                "maxMhz":  null,
+                "currentMhz":  2419,
+                "l2Bytes":  25165824,
+                "l3Bytes":  31457280,
+                "socket":  "U3E1",
+                "virtualization":  true,
+                "instructions":  [
+                                     "SSE",
+                                     "SSE2",
+                                     "SSE3",
+                                     "SSSE3",
+                                     "SSE4.1",
+                                     "SSE4.2",
+                                     "AVX",
+                                     "AVX2",
+                                     "POPCNT"
+                                 ],
+                "arch":  "x64",
+                "usagePct":  10
+            },
+    "memory":  {
+                   "totalBytes":  16895483904,
+                   "availableBytes":  4450947072,
+                   "usedBytes":  12444536832,
+                   "usedPct":  73.7,
+                   "modules":  [
+                                   {
+                                       "slot":  "Controller1-ChannelA-DIMM0",
+                                       "manufacturer":  "Golden Empire",
+                                       "partNumber":  "CL46-46-46 D5-5600",
+                                       "serial":  "0x00000000",
+                                       "capacityBytes":  17179869184,
+                                       "ratedMhz":  5600,
+                                       "speedMhz":  5600,
+                                       "type":  "DDR5",
+                                       "formFactor":  "SODIMM",
+                                       "voltageMv":  1100
+                                   }
+                               ],
+                   "dualChannelHint":  false
+               },
+    "gpus":  [
+                 {
+                     "name":  "NVIDIA GeForce RTX 4060 Laptop GPU",
+                     "vendor":  "NVIDIA",
+                     "vramBytes":  8585740288,
+                     "driverVersion":  "32.0.15.9597",
+                     "driverDate":  "2026-03-17T08:00:00+08:00",
+                     "discrete":  true,
+                     "status":  "OK"
+                 }
+             ],
+    "displays":  [
+                     {
+                         "name":  "BOE 显示器",
+                         "manufacturer":  "BOE",
+                         "resolution":  "2560x1600",
+                         "refreshHz":  165,
+                         "sizeInch":  15.7,
+                         "primary":  true
+                     },
+                     {
+                         "name":  "TE24-20",
+                         "manufacturer":  "LEN",
+                         "resolution":  "1920x1080",
+                         "refreshHz":  60,
+                         "sizeInch":  24,
+                         "primary":  false
+                     }
+                 ],
+    "disks":  [
+                  {
+                      "model":  "ZETTASTONE CP300Y 1024GB",
+                      "vendor":  null,
+                      "serial":  "S6B0NL0T412345.",
+                      "firmware":  "BXCBGC26",
+                      "interfaceType":  "NVMe",
+                      "mediaType":  "SSD",
+                      "totalBytes":  1024203640320,
+                      "health":  "healthy",
+                      "healthPct":  null,
+                      "temperatureC":  null,
+                      "powerOnHours":  null,
+                      "powerCycles":  null,
+                      "volumes":  [
+                                      {
+                                          "drive":  "C:",
+                                          "label":  "Acer",
+                                          "fs":  "NTFS",
+                                          "totalBytes":  322125688832,
+                                          "freeBytes":  70003994624
+                                      },
+                                      {
+                                          "drive":  "D:",
+                                          "label":  "Data",
+                                          "fs":  "NTFS",
+                                          "totalBytes":  700455055360,
+                                          "freeBytes":  158002417664
+                                      }
+                                  ]
+                  }
+              ],
+    "network":  {
+                    "adapters":  [
+                                     {
+                                         "name":  "Motorcomm YT6801 Gigabit Ethernet Adapter",
+                                         "type":  "以太网",
+                                         "mac":  "A0-36-BC-11-22-33",
+                                         "ipv4":  null,
+                                         "ipv6":  null,
+                                         "gateway":  null,
+                                         "dns":  [
+
+                                                 ],
+                                         "speedMbps":  null,
+                                         "connected":  false,
+                                         "ssid":  null,
+                                         "signalPct":  null
+                                     },
+                                     {
+                                         "name":  "Intel(R) Wi-Fi 6 AX201 160MHz",
+                                         "type":  "WLAN",
+                                         "mac":  "A0-36-BC-44-55-66",
+                                         "ipv4":  "192.168.1.24",
+                                         "ipv6":  "fe80::1dd4:1c67:4aad:6458",
+                                         "gateway":  "192.168.1.1",
+                                         "dns":  [
+                                                     "192.168.1.1"
+                                                 ],
+                                         "speedMbps":  1168,
+                                         "connected":  true,
+                                         "ssid":  "QINGWU-5G",
+                                         "signalPct":  97
+                                     }
+                                 ],
+                    "internet":  true,
+                    "latencyMs":  44,
+                    "dnsOk":  true
+                },
+    "runtime":  {
+                    "dotnetFramework":  [
+                                            {
+                                                "version":  "4.8.1",
+                                                "release":  533320,
+                                                "installed":  true
+                                            },
+                                            {
+                                                "version":  "3.5",
+                                                "release":  null,
+                                                "installed":  true
+                                            }
+                                        ],
+                    "dotnetRuntimes":  [
+                                           {
+                                               "name":  "Microsoft.AspNetCore.App",
+                                               "version":  "8.0.1"
+                                           },
+                                           {
+                                               "name":  "Microsoft.AspNetCore.App",
+                                               "version":  "10.0.10"
+                                           },
+                                           {
+                                               "name":  "Microsoft.NETCore.App",
+                                               "version":  "8.0.1"
+                                           },
+                                           {
+                                               "name":  "Microsoft.NETCore.App",
+                                               "version":  "8.0.19"
+                                           },
+                                           {
+                                               "name":  "Microsoft.NETCore.App",
+                                               "version":  "10.0.8"
+                                           },
+                                           {
+                                               "name":  "Microsoft.NETCore.App",
+                                               "version":  "10.0.10"
+                                           },
+                                           {
+                                               "name":  "Microsoft.WindowsDesktop.App",
+                                               "version":  "8.0.1"
+                                           },
+                                           {
+                                               "name":  "Microsoft.WindowsDesktop.App",
+                                               "version":  "8.0.19"
+                                           },
+                                           {
+                                               "name":  "Microsoft.WindowsDesktop.App",
+                                               "version":  "10.0.8"
+                                           },
+                                           {
+                                               "name":  "Microsoft.WindowsDesktop.App",
+                                               "version":  "10.0.10"
+                                           }
+                                       ],
+                    "vcpp":  [
+                                 {
+                                     "year":  "2005",
+                                     "arch":  "x64",
+                                     "version":  "8.0.61000"
+                                 },
+                                 {
+                                     "year":  "2008",
+                                     "arch":  "x64",
+                                     "version":  "9.0.30729.6161"
+                                 },
+                                 {
+                                     "year":  "2008",
+                                     "arch":  "x86",
+                                     "version":  "9.0.30729.6161"
+                                 },
+                                 {
+                                     "year":  "2010",
+                                     "arch":  "x64",
+                                     "version":  "10.0.40219"
+                                 },
+                                 {
+                                     "year":  "2010",
+                                     "arch":  "x86",
+                                     "version":  "10.0.40219"
+                                 },
+                                 {
+                                     "year":  "2012",
+                                     "arch":  "x64",
+                                     "version":  "11.0.61030.0"
+                                 },
+                                 {
+                                     "year":  "2012",
+                                     "arch":  "x86",
+                                     "version":  "11.0.61030.0"
+                                 },
+                                 {
+                                     "year":  "2013",
+                                     "arch":  "x64",
+                                     "version":  "12.0.40664.0"
+                                 },
+                                 {
+                                     "year":  "2013",
+                                     "arch":  "x86",
+                                     "version":  "12.0.40664.0"
+                                 },
+                                 {
+                                     "year":  "2015-2022",
+                                     "arch":  "x64",
+                                     "version":  "14.51.36247.0"
+                                 },
+                                 {
+                                     "year":  "2015-2022",
+                                     "arch":  "x86",
+                                     "version":  "14.51.36247.0"
+                                 }
+                             ],
+                    "directx":  {
+                                    "version":  "12",
+                                    "major":  12,
+                                    "d3d12":  true,
+                                    "wddm":  null,
+                                    "featureLevel":  "12_2"
+                                },
+                    "webview2":  {
+                                     "installed":  true,
+                                     "version":  "155.0.4283.62"
+                                 },
+                    "java":  [
+                                 {
+                                     "name":  "Java (JDK)",
+                                     "version":  "21.0.9",
+                                     "path":  "C:\\Program Files\\Java\\jdk-21",
+                                     "source":  "registry"
+                                 },
+                                 {
+                                     "name":  "Java",
+                                     "version":  null,
+                                     "path":  "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.exe",
+                                     "source":  "path"
+                                 }
+                             ],
+                    "node":  {
+                                 "name":  "Node.js",
+                                 "version":  "24.12.0",
+                                 "path":  "D:\\nodejs\\node.exe",
+                                 "source":  "path"
+                             },
+                    "python":  {
+                                   "name":  "Python",
+                                   "version":  "3.14",
+                                   "path":  "D:\\Python314\\python.exe",
+                                   "source":  "path"
+                               },
+                    "git":  {
+                                "name":  "Git",
+                                "version":  "2.54.0.windows.1",
+                                "path":  "C:\\Program Files\\Git\\cmd\\git.exe",
+                                "source":  "path"
+                            },
+                    "wsl":  {
+                                "installed":  true,
+                                "version":  "2.7.10.0",
+                                "distros":  [
+
+                                            ]
+                            },
+                    "powershellVersion":  "5.1.26100.6899",
+                    "software":  [
+                                     {
+                                         "name":  "Redis",
+                                         "version":  "3.0.504",
+                                         "path":  "C:\\Program Files\\Redis\\redis-server.exe",
+                                         "category":  "database",
+                                         "source":  "registry",
+                                         "running":  true,
+                                         "detail":  "6379 端口"
+                                     },
+                                     {
+                                         "name":  "SQLite",
+                                         "version":  null,
+                                         "path":  "C:\\windows\\System32\\winsqlite3.dll",
+                                         "category":  "database",
+                                         "source":  "dir",
+                                         "running":  null,
+                                         "detail":  "系统自带 SQLite 数据库"
+                                     },
+                                     {
+                                         "name":  "Docker Desktop",
+                                         "version":  "4.86.0",
+                                         "path":  "C:\\Users\\hjiap\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe",
+                                         "category":  "container",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  "客户端 29.7.2"
+                                     },
+                                     {
+                                         "name":  "VMware Workstation",
+                                         "version":  "17.6.3",
+                                         "path":  null,
+                                         "category":  "container",
+                                         "source":  "registry",
+                                         "running":  true,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  ".NET SDK",
+                                         "version":  "10.0.302",
+                                         "path":  "C:\\Program Files\\dotnet",
+                                         "category":  "language",
+                                         "source":  "command",
+                                         "running":  null,
+                                         "detail":  "已安装 2 个 SDK：10.0.302, 8.0.101"
+                                     },
+                                     {
+                                         "name":  "MSBuild",
+                                         "version":  "17.9.5.7608",
+                                         "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+                                         "category":  "language",
+                                         "source":  "dir",
+                                         "running":  null,
+                                         "detail":  "随 Visual Studio 安装"
+                                     },
+                                     {
+                                         "name":  "PHP",
+                                         "version":  "8.4.24",
+                                         "path":  "C:\\php\\php.exe",
+                                         "category":  "language",
+                                         "source":  "path",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "Maven",
+                                         "version":  "3.9.9",
+                                         "path":  "D:\\tools\\apache-maven-3.9.9\\bin\\mvn.cmd",
+                                         "category":  "devTool",
+                                         "source":  "path",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "PyCharm",
+                                         "version":  "2026.1",
+                                         "path":  "D:\\JetBrains\\",
+                                         "category":  "devTool",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "Visual Studio 2022",
+                                         "version":  "17.9.34616.47",
+                                         "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community",
+                                         "category":  "devTool",
+                                         "source":  "command",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "VS Code",
+                                         "version":  "1.142.0",
+                                         "path":  "D:\\Microsoft VS Code\\bin\\code.cmd",
+                                         "category":  "devTool",
+                                         "source":  "registry",
+                                         "running":  true,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "Microsoft Office",
+                                         "version":  "16.0.20430.20182",
+                                         "path":  "C:\\Program Files\\Microsoft Office",
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "PotPlayer",
+                                         "version":  "210428",
+                                         "path":  null,
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "QQ",
+                                         "version":  "9.9.21.39038",
+                                         "path":  null,
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "Steam",
+                                         "version":  "2.10.91.91",
+                                         "path":  null,
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "WPS Office",
+                                         "version":  "11.1.0.10009",
+                                         "path":  null,
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "网易云音乐",
+                                         "version":  "3.1.41.205564",
+                                         "path":  null,
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     },
+                                     {
+                                         "name":  "微信",
+                                         "version":  "4.1.15.56",
+                                         "path":  "\"C:\\Program Files\\Tencent\\Weixin\"",
+                                         "category":  "common",
+                                         "source":  "registry",
+                                         "running":  null,
+                                         "detail":  null
+                                     }
+                                 ]
+                },
+    "security":  {
+                     "defenderRealtime":  true,
+                     "antivirus":  [
+                                       "Windows Defender"
+                                   ],
+                     "firewall":  "已关闭（域 / 专用 / 公用）",
+                     "secureBoot":  true,
+                     "tpm":  "2.0",
+                     "uac":  "已开启（管理员批准模式）"
+                 },
+    "compat":  {
+                   "verdict":  "ok",
+                   "passCount":  17,
+                   "warnCount":  0,
+                   "failCount":  0,
+                   "unknownCount":  0,
+                   "items":  [
+                                 {
+                                     "id":  "c.arch.cpu64",
+                                     "name":  "64 位处理器",
+                                     "status":  "pass",
+                                     "actual":  "64 位（x64）",
+                                     "requirement":  "需要 64 位处理器（x64 / ARM64）",
+                                     "reason":  null,
+                                     "detail":  "处理器与系统均为 64 位"
+                                 },
+                                 {
+                                     "id":  "c.cpu.model",
+                                     "name":  "CPU 型号（Windows 11 支持列表）",
+                                     "status":  "pass",
+                                     "actual":  "Intel(R) Core(TM) i7-14650HX",
+                                     "requirement":  "Intel 第 8 代及以上 / AMD Zen 2（Ryzen 2000 系列）及以上",
+                                     "reason":  null,
+                                     "detail":  "按代际规则命中 Windows 11 官方支持范围"
+                                 },
+                                 {
+                                     "id":  "c.cpu.cores",
+                                     "name":  "物理核心数",
+                                     "status":  "pass",
+                                     "actual":  "16 核 / 24 线程",
+                                     "requirement":  "至少 2 个物理核心",
+                                     "reason":  null,
+                                     "detail":  "满足 Windows 11 最少核心要求"
+                                 },
+                                 {
+                                     "id":  "c.cpu.clock",
+                                     "name":  "处理器主频",
+                                     "status":  "pass",
+                                     "actual":  "2200 MHz",
+                                     "requirement":  "不低于 1 GHz",
+                                     "reason":  null,
+                                     "detail":  "满足 Windows 11 最低主频要求"
+                                 },
+                                 {
+                                     "id":  "c.mem.size",
+                                     "name":  "内存容量",
+                                     "status":  "pass",
+                                     "actual":  "16 GB",
+                                     "requirement":  "至少 4 GB（建议 8 GB 以上）",
+                                     "reason":  null,
+                                     "detail":  "满足 Windows 11 最低内存要求"
+                                 },
+                                 {
+                                     "id":  "c.disk.space",
+                                     "name":  "系统盘可用空间",
+                                     "status":  "pass",
+                                     "actual":  "65.2 GB 可用 / 300 GB 总容量",
+                                     "requirement":  "至少 64 GB 可用空间",
+                                     "reason":  null,
+                                     "detail":  "满足 Windows 11 安装与更新所需空间"
+                                 },
+                                 {
+                                     "id":  "c.fw.uefi",
+                                     "name":  "UEFI 固件",
+                                     "status":  "pass",
+                                     "actual":  "UEFI",
+                                     "requirement":  "需要 UEFI 引导模式",
+                                     "reason":  null,
+                                     "detail":  "当前为 UEFI 引导"
+                                 },
+                                 {
+                                     "id":  "c.fw.secureboot",
+                                     "name":  "安全启动（Secure Boot）",
+                                     "status":  "pass",
+                                     "actual":  "已启用",
+                                     "requirement":  "需要支持并已启用 Secure Boot",
+                                     "reason":  null,
+                                     "detail":  "安全启动已启用"
+                                 },
+                                 {
+                                     "id":  "c.fw.tpm",
+                                     "name":  "TPM 2.0",
+                                     "status":  "pass",
+                                     "actual":  "TPM 2.0",
+                                     "requirement":  "需要 TPM 2.0（可信平台模块）",
+                                     "reason":  null,
+                                     "detail":  "TPM 2.0 已启用"
+                                 },
+                                 {
+                                     "id":  "c.gfx.dx12",
+                                     "name":  "DirectX 12",
+                                     "status":  "pass",
+                                     "actual":  "支持（特性级别 12_2）",
+                                     "requirement":  "需要显卡支持 DirectX 12（特性级别 12_0 及以上）",
+                                     "reason":  null,
+                                     "detail":  "显卡驱动支持 DirectX 12"
+                                 },
+                                 {
+                                     "id":  "c.gfx.wddm",
+                                     "name":  "WDDM 2.0 驱动模型",
+                                     "status":  "pass",
+                                     "actual":  "由 DirectX 12 推断（≥ WDDM 2.0）",
+                                     "requirement":  "需要 WDDM 2.0 及以上显示驱动模型",
+                                     "reason":  null,
+                                     "detail":  "由 DirectX 12 特性级别推断满足 WDDM 2.0 及以上"
+                                 },
+                                 {
+                                     "id":  "c.display.basic",
+                                     "name":  "显示设备",
+                                     "status":  "pass",
+                                     "actual":  "15.7 英寸 · 2560×1600",
+                                     "requirement":  "对角线 ≥ 9 英寸，分辨率 ≥ 1280×720",
+                                     "reason":  null,
+                                     "detail":  "满足 Windows 11 显示要求"
+                                 },
+                                 {
+                                     "id":  "c.cpu.sse42",
+                                     "name":  "SSE4.2 / POPCNT 指令集",
+                                     "status":  "pass",
+                                     "actual":  "支持",
+                                     "requirement":  "需要支持 SSE4.2 与 POPCNT 指令集",
+                                     "reason":  null,
+                                     "detail":  "处理器支持 Windows 11 24H2 所需指令集"
+                                 },
+                                 {
+                                     "id":  "c.disk.gpt",
+                                     "name":  "系统盘分区表",
+                                     "status":  "pass",
+                                     "actual":  "GPT",
+                                     "requirement":  "建议使用 GPT 分区表",
+                                     "reason":  null,
+                                     "detail":  "系统盘为 GPT 分区表"
+                                 },
+                                 {
+                                     "id":  "c.os.version",
+                                     "name":  "操作系统版本",
+                                     "status":  "pass",
+                                     "actual":  "Windows 11（26100）",
+                                     "requirement":  "Windows 10 2004（19041）及以上",
+                                     "reason":  null,
+                                     "detail":  "系统版本满足升级条件"
+                                 },
+                                 {
+                                     "id":  "gpu.driver",
+                                     "name":  "显卡驱动",
+                                     "status":  "pass",
+                                     "actual":  "NVIDIA 32.0.15.9597 / 2026-03-17",
+                                     "requirement":  "需要已安装厂商显卡驱动（WDDM 2.0 及以上）",
+                                     "reason":  null,
+                                     "detail":  "驱动已正常安装，支持 DirectX 12 / WDDM 2.0+（WDDM 由 DX12 特性级别推断）"
+                                 },
+                                 {
+                                     "id":  "gpu.driverAge",
+                                     "name":  "显卡驱动时效",
+                                     "status":  "pass",
+                                     "actual":  "2026-03-17（7 个月前）",
+                                     "requirement":  "驱动发布日期不超过 18 个月",
+                                     "reason":  null,
+                                     "detail":  "驱动较新，未超过 18 个月"
+                                 }
+                             ]
+               },
+    "score":  {
+                  "total":  94,
+                  "level":  "excellent",
+                  "parts":  [
+                                {
+                                    "key":  "cpu",
+                                    "label":  "处理器",
+                                    "score":  90,
+                                    "weight":  0.25,
+                                    "note":  "16 核 24 线程 · Intel 第 14 代 · 基准 2200 MHz"
+                                },
+                                {
+                                    "key":  "memory",
+                                    "label":  "内存",
+                                    "score":  90,
+                                    "weight":  0.2,
+                                    "note":  "15.7 GB DDR5 · 已用 73.7% · 单通道"
+                                },
+                                {
+                                    "key":  "storage",
+                                    "label":  "存储",
+                                    "score":  97,
+                                    "weight":  0.25,
+                                    "note":  "NVMe · 状态 健康 · 系统盘剩余 22%"
+                                },
+                                {
+                                    "key":  "gpu",
+                                    "label":  "显卡",
+                                    "score":  95,
+                                    "weight":  0.15,
+                                    "note":  "NVIDIA GeForce RTX 4060 Laptop GPU · 独立显卡"
+                                },
+                                {
+                                    "key":  "system",
+                                    "label":  "系统状态",
+                                    "score":  100,
+                                    "weight":  0.15,
+                                    "note":  "激活 已激活 · 安全启动 已开启 · 系统盘剩余 65.2 GB · 已运行 7 小时"
+                                }
+                            ]
+              }
+}

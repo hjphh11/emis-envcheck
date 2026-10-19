@@ -1,9 +1,12 @@
 # ============================================================
 #  Emis - Environment Check : hardware / system / runtime collector
-#  collectorVersion: 1.0.0
+#  collectorVersion: 1.1.0  (must match $script:CollectorVersion below)
 #
-#  Usage (invoked by the Rust backend with -File):
-#    powershell -NoProfile -ExecutionPolicy Bypass -File scan.ps1 -OutFile <jsonPath>
+#  Usage (invoked by the Rust backend):
+#    The Rust side writes this script to %TEMP% and runs it through an
+#    -EncodedCommand bootstrap that calls:
+#      & '<temp>\scan.ps1' -OutFile <jsonPath>
+#    so the collector never writes to stdout; the JSON is the only output channel.
 #
 #  Conventions:
 #   - Emits exactly one UTF-8 (no BOM) JSON file shaped like ScanResult in src/types.ts.

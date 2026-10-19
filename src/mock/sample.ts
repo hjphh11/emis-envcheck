@@ -3,9 +3,49 @@
  * 只为了让 UI 脱离 Rust 也能开发/截图；桌面里永远走真实 scan_all。
  * 数值按「一台 2023 年的游戏本」编的，结构必须与 src/types.ts 完全一致。
  */
-import type { AppInfo, LiveSnapshot, ScanResult } from "../types";
+import type {
+  AppInfo,
+  CheckStatus,
+  CompatItem,
+  CompatResult,
+  LiveSnapshot,
+  ScanResult,
+} from "../types";
 
 const GB = 1024 ** 3;
+
+/** 与真实采集器（scan.ps1）一致的 17 条检测项，id 用点分命名 */
+const COMPAT_ITEMS: CompatItem[] = [
+  { id: "c.arch.cpu64", name: "64 位处理器", status: "pass", actual: "64 位（x64）", requirement: "需要 64 位处理器（x64 / ARM64）", reason: null, detail: "处理器与系统均为 64 位" },
+  { id: "c.cpu.model", name: "CPU 型号（Windows 11 支持列表）", status: "pass", actual: "AMD Ryzen 9 7940HS（Zen4）", requirement: "Intel 第 8 代及以上 / AMD Zen 2（Ryzen 2000 系列）及以上", reason: null, detail: "按代际规则命中 Windows 11 官方支持范围" },
+  { id: "c.cpu.cores", name: "物理核心数", status: "pass", actual: "8 核 / 16 线程", requirement: "至少 2 个物理核心", reason: null, detail: "满足 Windows 11 最少核心要求" },
+  { id: "c.cpu.clock", name: "处理器主频", status: "pass", actual: "4000 MHz", requirement: "不低于 1 GHz", reason: null, detail: "满足 Windows 11 最低主频要求" },
+  { id: "c.mem.size", name: "内存容量", status: "pass", actual: "32 GB", requirement: "至少 4 GB（建议 8 GB 以上）", reason: null, detail: "满足 Windows 11 最低内存要求" },
+  { id: "c.disk.space", name: "系统盘可用空间", status: "pass", actual: "212 GB 可用 / 476 GB 总容量", requirement: "至少 64 GB 可用空间", reason: null, detail: "满足 Windows 11 安装与更新所需空间" },
+  { id: "c.fw.uefi", name: "UEFI 固件", status: "pass", actual: "UEFI", requirement: "需要 UEFI 引导模式", reason: null, detail: "当前为 UEFI 引导" },
+  { id: "c.fw.secureboot", name: "安全启动（Secure Boot）", status: "pass", actual: "已启用", requirement: "需要支持并已启用 Secure Boot", reason: null, detail: "安全启动已启用" },
+  { id: "c.fw.tpm", name: "TPM 2.0", status: "pass", actual: "TPM 2.0", requirement: "需要 TPM 2.0（可信平台模块）", reason: null, detail: "TPM 2.0 已启用" },
+  { id: "c.gfx.dx12", name: "DirectX 12", status: "pass", actual: "支持（特性级别 12_1）", requirement: "需要显卡支持 DirectX 12（特性级别 12_0 及以上）", reason: null, detail: "显卡驱动支持 DirectX 12" },
+  { id: "c.gfx.wddm", name: "WDDM 2.0 驱动模型", status: "pass", actual: "WDDM 3.1", requirement: "需要 WDDM 2.0 及以上显示驱动模型", reason: null, detail: "显示驱动模型满足要求" },
+  { id: "c.display.basic", name: "显示设备", status: "pass", actual: "14 英寸 · 2560×1600", requirement: "对角线 ≥ 9 英寸，分辨率 ≥ 1280×720", reason: null, detail: "满足 Windows 11 显示要求" },
+  { id: "c.cpu.sse42", name: "SSE4.2 / POPCNT 指令集", status: "pass", actual: "支持", requirement: "需要支持 SSE4.2 与 POPCNT 指令集", reason: null, detail: "处理器支持 Windows 11 24H2 所需指令集" },
+  { id: "c.disk.gpt", name: "系统盘分区表", status: "pass", actual: "GPT", requirement: "建议使用 GPT 分区表", reason: null, detail: "系统盘为 GPT 分区表" },
+  { id: "c.os.version", name: "操作系统版本", status: "pass", actual: "Windows 11（26100）", requirement: "Windows 10 2004（19041）及以上", reason: null, detail: "系统版本满足升级条件" },
+  { id: "gpu.driver", name: "显卡驱动", status: "pass", actual: "32.0.15.7688（2026-06-12）", requirement: "需要已安装厂商显卡驱动（WDDM 2.0 及以上）", reason: null, detail: "驱动已正常安装，支持 DirectX 12 / WDDM 2.0+" },
+  { id: "gpu.driverAge", name: "显卡驱动时效", status: "pass", actual: "2026-06-12（4 个月前）", requirement: "驱动发布日期不超过 18 个月", reason: null, detail: "驱动较新，未超过 18 个月" },
+];
+
+/** 四个计数与结论一律由 items 实际统计推导，不再手写，避免与条目自相矛盾 */
+function summarizeCompat(items: CompatItem[]): CompatResult {
+  const count = (s: CheckStatus) => items.filter((it) => it.status === s).length;
+  const passCount = count("pass");
+  const warnCount = count("warn");
+  const failCount = count("fail");
+  const unknownCount = count("unknown");
+  const verdict: CompatResult["verdict"] =
+    failCount > 0 ? "blocked" : warnCount > 0 ? "warn" : "ok";
+  return { verdict, passCount, warnCount, failCount, unknownCount, items };
+}
 
 export function mockScan(): ScanResult {
   return {
@@ -15,7 +55,7 @@ export function mockScan(): ScanResult {
       isAdmin: false,
       elevationGains: ["CPU 温度 / 风扇转速", "硬盘 SMART 明细", "TPM 与 BitLocker 状态"],
       warnings: ["未以管理员运行：温度与 SMART 明细不可用"],
-      collectorVersion: "1.0.0",
+      collectorVersion: "1.1.0",
     },
     system: {
       caption: "Windows 11 专业工作站版",
@@ -221,27 +261,7 @@ export function mockScan(): ScanResult {
       tpm: "2.0",
       uac: "已开启",
     },
-    compat: {
-      verdict: "ok",
-      passCount: 9,
-      warnCount: 1,
-      failCount: 0,
-      unknownCount: 0,
-      items: [
-        { id: "cpu64", name: "64 位处理器", status: "pass", actual: "x64", requirement: "需要 64 位处理器", reason: null, detail: "AMD Ryzen 9 7940HS" },
-        { id: "cpuModel", name: "CPU 型号在支持列表", status: "pass", actual: "Ryzen 9 7940HS（Zen4）", requirement: "Intel 8 代及以上 / AMD Zen 2 及以上", reason: null, detail: null },
-        { id: "cpuCore", name: "核心与频率", status: "pass", actual: "8 核 16 线程 / 4.0GHz", requirement: "≥ 2 核 且 ≥ 1.0GHz", reason: null, detail: null },
-        { id: "ram", name: "内存容量", status: "pass", actual: "32 GB", requirement: "≥ 4 GB", reason: null, detail: null },
-        { id: "disk", name: "系统盘可用空间", status: "pass", actual: "212 GB 可用", requirement: "≥ 64 GB", reason: null, detail: null },
-        { id: "uefi", name: "UEFI 固件", status: "pass", actual: "UEFI", requirement: "需要 UEFI 引导", reason: null, detail: null },
-        { id: "secureboot", name: "安全启动", status: "pass", actual: "已开启", requirement: "需要支持并开启安全启动", reason: null, detail: null },
-        { id: "tpm", name: "TPM 2.0", status: "pass", actual: "2.0", requirement: "需要 TPM 2.0", reason: null, detail: null },
-        { id: "dx12", name: "DirectX 12 / WDDM 2.0", status: "pass", actual: "DirectX 12 / WDDM 3.1", requirement: "需要 DirectX 12 与 WDDM 2.0 显卡驱动", reason: null, detail: null },
-        { id: "display", name: "显示器规格", status: "pass", actual: "2560×1600 @165Hz", requirement: "≥ 9 英寸 / 720p", reason: null, detail: null },
-        { id: "sse42", name: "SSE4.2 / POPCNT 指令集", status: "pass", actual: "支持", requirement: "需要支持 SSE4.2 与 POPCNT", reason: null, detail: "24H2 起新增要求" },
-        { id: "driver", name: "显卡驱动签名", status: "warn", actual: "WDDM 3.1（2026-06 驱动）", requirement: "建议使用最新驱动", reason: "驱动已发布 4 个月，建议更新到最新版", detail: null },
-      ],
-    },
+    compat: summarizeCompat(COMPAT_ITEMS),
     score: {
       total: 86,
       level: "good",
@@ -283,7 +303,7 @@ export function mockLive(): LiveSnapshot {
 
 export const mockAppInfo: AppInfo = {
   name: "爱弥斯 · 环境检测",
-  version: "1.0.0",
+  version: "1.2.0",
   author: "清吾",
   homepage: "https://qingwu.ink",
   buildDate: new Date().toISOString(),

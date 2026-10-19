@@ -3,15 +3,23 @@
 
 use crate::types::ScanResult;
 use crate::util::truncate_chars;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 /// 采集器源码：编译期内嵌，最终 exe 不依赖外部的 scripts/scan.ps1。
 const SCAN_SCRIPT: &str = include_str!("../scripts/scan.ps1");
 
 /// `CREATE_NO_WINDOW`：GUI 程序调用控制台程序时不弹黑框。
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+/// 采集子进程的硬超时：超过这个时间还没退出就直接强杀。
+/// WMI / 驱动查询偶发卡死时，没有它前端会一直转圈。
+const SCAN_TIMEOUT: Duration = Duration::from_secs(20);
+
+/// `try_wait` 的轮询间隔：既不做 100% 占核的忙等，也保证超时判定足够及时。
+const SCAN_POLL_INTERVAL: Duration = Duration::from_millis(25);
 
 /// 全量扫描。时间统计覆盖「写临时脚本 → PowerShell 采集 → 读回 JSON」全过程。
 pub fn scan_all() -> Result<ScanResult, String> {
@@ -74,17 +82,64 @@ fn collect(script_path: &Path, json_path: &Path) -> Result<ScanResult, String> {
         command.creation_flags(CREATE_NO_WINDOW);
     }
 
-    let output = command.output().map_err(|e| {
+    // 用 spawn 而不是 output()：`output()` 会一直阻塞到子进程退出，没有任何超时手段。
+    let mut child = command.spawn().map_err(|e| {
         format!(
             "无法启动 PowerShell（{}）：{e}",
             powershell.display()
         )
     })?;
 
-    if !output.status.success() {
-        let exit_code = output.status.code().unwrap_or(-1);
-        let stderr = decode_console(&output.stderr);
-        let stdout = decode_console(&output.stdout);
+    // —— 为什么必须另起线程把管道读干 ——
+    // Windows 匿名管道缓冲约 64KB。采集器正常情况下不往 stdout 写数据，但一旦脚本里有
+    // `Write-Host` / 原生命令输出，缓冲写满后子进程就会阻塞在写操作上：主线程再怎么
+    // `try_wait` 也等不到它退出，直接变成死锁。所以两个管道都 take 出来交给独立线程读完。
+    let stdout_reader = child.stdout.take().map(spawn_pipe_reader);
+    let stderr_reader = child.stderr.take().map(spawn_pipe_reader);
+
+    // 主线程只做轻量轮询（25ms），不忙等；到点还没退出就判定超时。
+    let deadline = Instant::now() + SCAN_TIMEOUT;
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(status)) => break Some(status),
+            Ok(None) => {
+                if Instant::now() >= deadline {
+                    break None;
+                }
+                std::thread::sleep(SCAN_POLL_INTERVAL);
+            }
+            Err(e) => {
+                // 等不到状态时也要把子进程收干净，别留孤儿进程和两个卡住的读线程。
+                let _ = child.kill();
+                let _ = child.wait();
+                let _ = join_pipe_reader(stdout_reader);
+                let _ = join_pipe_reader(stderr_reader);
+                return Err(format!("等待 PowerShell 采集进程时出错：{e}"));
+            }
+        }
+    };
+
+    let Some(status) = status else {
+        // 超时：kill → wait 回收 → join 读线程（进程死后管道关闭，read_to_end 会正常 EOF）。
+        let _ = child.kill();
+        let _ = child.wait();
+        let _ = join_pipe_reader(stdout_reader);
+        let _ = join_pipe_reader(stderr_reader);
+        return Err(
+            "采集脚本超时（超过 20 秒未返回），已强制结束。可能是 WMI / 驱动查询卡住，请重试。"
+                .to_string(),
+        );
+    };
+
+    // 正常退出：先回收句柄（避免僵尸），再取读线程已经读到的完整输出。
+    let _ = child.wait();
+    let stdout = join_pipe_reader(stdout_reader);
+    let stderr = join_pipe_reader(stderr_reader);
+
+    if !status.success() {
+        let exit_code = status.code().unwrap_or(-1);
+        let stderr = decode_console(&stderr);
+        let stdout = decode_console(&stdout);
         let detail = if stderr.trim().is_empty() {
             stdout.trim().to_string()
         } else {
@@ -119,6 +174,28 @@ fn collect(script_path: &Path, json_path: &Path) -> Result<ScanResult, String> {
             truncate_chars(raw.trim(), 200)
         )
     })
+}
+
+/// 起一个线程把子进程的某个管道读到 EOF，返回读到的原始字节。
+/// 独立线程读干是硬性要求：管道缓冲写满时子进程会阻塞在写端，主线程再怎么等也等不到退出。
+fn spawn_pipe_reader<R: Read + Send + 'static>(
+    mut pipe: R,
+) -> std::thread::JoinHandle<std::io::Result<Vec<u8>>> {
+    std::thread::spawn(move || {
+        let mut buf = Vec::new();
+        pipe.read_to_end(&mut buf).map(|_| buf)
+    })
+}
+
+/// 收掉读线程并取回输出。读线程 panic 或读失败都不应该把异常传染给调用方，
+/// 最坏情况就是拿不到输出内容（对应「脚本没有输出错误详情」的既有分支）。
+fn join_pipe_reader(
+    handle: Option<std::thread::JoinHandle<std::io::Result<Vec<u8>>>>,
+) -> Vec<u8> {
+    handle
+        .and_then(|handle| handle.join().ok())
+        .and_then(Result::ok)
+        .unwrap_or_default()
 }
 
 /// 写临时脚本。刻意带上 UTF-8 BOM：

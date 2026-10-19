@@ -12,7 +12,6 @@ release/
 *.nsis.zip
 
 # 本地临时 / 调试产物
-dev/sample-scan.json
 dev/*.log
 dev/*.png
 dev/*.html
@@ -33,6 +32,8 @@ npm-debug.log*
 *.suo
 *.sw?
 dev/*scan*.json
+# 但脱敏后的契约样本要入库：dev/verify.ps1 的默认 -Path 指向它
+!dev/sample-scan.json
 dev/tabs/
 
 # 需要 gh token 的 workflow scope 才能推送（本机 token 没有）

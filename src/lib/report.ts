@@ -2,7 +2,13 @@
  * 报告导出：自包含 HTML（内联 CSS、不引任何外部资源）与 JSON。
  * 暖色排版与界面同源，脱离程序也能在浏览器里直接打开。
  */
-import type { AppInfo, CheckStatus, ScanResult } from "../types";
+import type {
+  AppInfo,
+  CheckStatus,
+  MotherboardInfo,
+  ScanResult,
+  SecurityInfo,
+} from "../types";
 import {
   fmtBytes,
   fmtCores,
@@ -50,6 +56,11 @@ function val(v: unknown, fallback = "未知"): string {
   return esc(v);
 }
 
+/** 布尔三态 → 是 / 否 / 未知（null 不当成「否」） */
+function triText(v: boolean | null | undefined): string {
+  return v == null ? "未知" : v ? "是" : "否";
+}
+
 function row(k: string, v: string): string {
   return `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;
 }
@@ -85,6 +96,9 @@ export function reportFileName(ext: "html" | "json"): string {
 export function buildHtmlReport(scan: ScanResult, info: AppInfo | null): string {
   const { meta, system, cpu, memory, gpus, disks, network, runtime, compat, score } =
     scan;
+  /* 老采集器 / 异常数据可能缺这两块，统一兜底成空对象 */
+  const motherboard: Partial<MotherboardInfo> = scan.motherboard ?? {};
+  const security: Partial<SecurityInfo> = scan.security ?? {};
   const level = levelInfo(score.total);
   const verdictText = VERDICT_TEXT[compat.verdict] ?? "未知";
 
@@ -117,6 +131,45 @@ export function buildHtmlReport(scan: ScanResult, info: AppInfo | null): string 
     row("安装日期", fmtDate(system.installDate)),
     row("上次启动", fmtDateTime(system.lastBoot)),
     row("时区", val(system.timeZone)),
+  ];
+
+  /* —— 主板与固件 —— */
+  const boardName =
+    [motherboard.vendor, motherboard.model].filter(Boolean).join(" ") || null;
+  const biosName =
+    [motherboard.biosVendor, motherboard.biosVersion].filter(Boolean).join(" ") ||
+    null;
+  const boardTpm = motherboard.tpmVersion
+    ? `${motherboard.tpmVersion}${motherboard.tpmEnabled ? "（已启用）" : "（已停用）"}`
+    : null;
+
+  const motherboardRows = [
+    row("主板", val(boardName)),
+    row("版本", val(motherboard.version)),
+    row("BIOS", val(biosName)),
+    row("BIOS 日期", fmtDate(motherboard.biosDate)),
+    row("固件类型", val(motherboard.firmwareMode)),
+    row("安全启动", triText(motherboard.secureBoot)),
+    row("TPM", val(boardTpm)),
+    row("整机序列号", `<span class="mono">${val(motherboard.serial)}</span>`),
+  ];
+
+  /* —— 安全 —— */
+  const antivirus = security.antivirus ?? [];
+  const defenderText =
+    security.defenderRealtime == null
+      ? "未知"
+      : security.defenderRealtime
+        ? "已开启"
+        : "已关闭";
+
+  const securityRows = [
+    row("实时保护", defenderText),
+    row("第三方杀软", antivirus.length ? esc(antivirus.join("、")) : "未检测到"),
+    row("防火墙", val(security.firewall)),
+    row("用户账户控制", val(security.uac)),
+    row("安全启动", triText(security.secureBoot)),
+    row("TPM", val(security.tpm)),
   ];
 
   const cpuRows = [
@@ -268,7 +321,7 @@ export function buildHtmlReport(scan: ScanResult, info: AppInfo | null): string 
 
   const generatedAt = fmtDateTime(meta.generatedAt);
   const appName = info?.name || "爱弥斯 · 环境检测";
-  const appVersion = info?.version || "1.0.0";
+  const appVersion = info?.version || "1.2.0";
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -403,6 +456,16 @@ export function buildHtmlReport(scan: ScanResult, info: AppInfo | null): string 
   <section class="card">
     <h2>系统</h2>
     ${table(["项目", "值"], systemRows)}
+  </section>
+
+  <section class="card">
+    <h2>主板与固件</h2>
+    ${table(["项目", "值"], motherboardRows)}
+  </section>
+
+  <section class="card">
+    <h2>安全</h2>
+    ${table(["项目", "值"], securityRows)}
   </section>
 
   <section class="card">

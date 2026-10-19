@@ -28,7 +28,7 @@ pub fn live_snapshot() -> Result<LiveSnapshot, String> {
 pub fn app_info() -> AppInfo {
     AppInfo {
         name: "爱弥斯 · 环境检测".to_string(),
-        // 版本以 Cargo.toml 为准（1.0.0），和 tauri.conf.json 保持同步
+        // 版本以 Cargo.toml 为准，和 tauri.conf.json / package.json 保持同步
         version: env!("CARGO_PKG_VERSION").to_string(),
         author: "清吾".to_string(),
         homepage: "https://qingwu.ink".to_string(),
